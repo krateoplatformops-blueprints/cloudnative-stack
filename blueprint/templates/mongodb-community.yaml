@@ -1,0 +1,32 @@
+{{- if .Values.mongodb_operator.enabled }}
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: {{ .Values.mongodb_operator.clusterName | quote }}
+spec:
+  members: {{ .Values.mongodb_operator.replicas }}
+  type: ReplicaSet
+  version: {{ .Values.mongodb_operator.version | quote }}
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: {{ .Values.mongodb_operator.username | quote }}
+      db: "admin"
+      passwordSecretRef:
+        name: {{ .Values.mongodb_operator.passwordSecretName | quote }}
+      roles:
+        - name: "readWriteAnyDatabase"
+          db: "admin"
+        - name: "clusterAdmin"
+          db: "admin"
+  statefulSet:
+    spec:
+      volumeClaimTemplates:
+        - metadata:
+            name: data-volume
+          spec:
+            resources:
+              requests:
+                storage: {{ .Values.mongodb_operator.storageSize | quote }}
+{{- end }}

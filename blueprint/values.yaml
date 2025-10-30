@@ -1,0 +1,43 @@
+# Default values for multi-tier-app
+appName: multi-tier-app
+
+frontend:
+  image: "nginx:latest"
+  port: 80
+  replicas: 1
+
+backend:
+  image: "springcommunity/spring-boot-mongo-jwt-auth:latest"
+  port: 8080
+  replicas: 1
+
+kafka:
+  enabled: true
+  topicName: "my-topic"
+  partitions: 3
+  replicas: 1
+  bootstrapServers: "my-kafka-cluster-kafka-bootstrap:9092"
+
+hazelcast:
+  enabled: true
+  clusterName: "my-hazelcast-cluster"
+  clusterSize: 3
+
+mongodb_operator:
+  # Deploys a MongoDB cluster using the official MongoDB Community Operator
+  enabled: true
+  clusterName: "my-mongo-cluster"
+  replicas: 3
+  version: "6.0"
+  storageSize: "2Gi"
+  username: "my-mongo-user"
+  passwordSecretName: "my-mongo-user-password"
+  password: "" # If left empty, a 16-character random password will be generated.
+
+cloudnativepg:
+  enabled: true
+  clusterName: "my-cnpg-cluster"
+  instances: 3
+  storageSize: "1Gi"
+  databaseName: "appdb"
+  user: "appuser"

@@ -1,0 +1,8 @@
+{{- if .Values.hazelcast.enabled }}
+apiVersion: hazelcast.com/v1alpha1
+kind: Hazelcast
+metadata:
+  name: {{ .Values.hazelcast.clusterName }}
+spec:
+  clusterSize: {{ .Values.hazelcast.clusterSize }}
+{{- end }}
