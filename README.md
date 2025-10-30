@@ -28,7 +28,7 @@ For this blueprint to function correctly, your Kubernetes cluster **must** have 
 
 3.  **MongoDB Community Kubernetes Operator:**
     -   **Purpose:** Manages MongoDB Community replica sets and clusters.
-    -   **Installation Guide:** [MongoDB Operator Installation](https://www.mongodb.com/docs/kubernetes-operator/v1/procedures/install-operator/)
+    -   **Installation Guide:** [https://github.com/mongodb/mongodb-kubernetes](https://github.com/mongodb/mongodb-kubernetes)
 
 4.  **CloudNative-PG (for PostgreSQL):**
     -   **Purpose:** Manages the full lifecycle of a PostgreSQL cluster.

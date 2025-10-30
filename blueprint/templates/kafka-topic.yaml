@@ -4,7 +4,7 @@ kind: KafkaTopic
 metadata:
   name: {{ .Values.kafka.topicName }}
   labels:
-    strimzi.io/cluster: {{ .Values.kafka.bootstrapServers | split ":" | first }}
+    strimzi.io/cluster: {{ .Values.kafka.clusterName }}
 spec:
   partitions: {{ .Values.kafka.partitions }}
   replicas: {{ .Values.kafka.replicas }}
