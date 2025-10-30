@@ -137,11 +137,6 @@
       "kafka": {
         "additionalProperties": true,
         "properties": {
-          "bootstrapServers": {
-            "default": "my-kafka-cluster-kafka-bootstrap:9092",
-            "title": "bootstrapServers",
-            "type": "string"
-          },
           "enabled": {
             "default": true,
             "title": "enabled",
@@ -167,8 +162,7 @@
           "enabled",
           "topicName",
           "partitions",
-          "replicas",
-          "bootstrapServers"
+          "replicas"
         ],
         "title": "kafka",
         "type": "object"
