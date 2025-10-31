@@ -5,4 +5,11 @@ metadata:
   name: {{ .Values.hazelcast.clusterName }}
 spec:
   clusterSize: {{ .Values.hazelcast.clusterSize }}
+  clusterName: {{ .Values.hazelcast.clusterName }}
+  repository: {{ .Values.hazelcast.repository }}
+  version: {{ .Values.hazelcast.version }}
+  licenseKeySecretName: {{ .Values.hazelcast.clusterName }}-license-key
+  exposeExternally:
+    type: Smart
+    discoveryServiceType: LoadBalancer
 {{- end }}

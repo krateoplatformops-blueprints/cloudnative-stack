@@ -16,10 +16,11 @@ spec:
       passwordSecretRef:
         name: {{ .Values.mongodb_operator.passwordSecretName | quote }}
       roles:
-        - name: "readWriteAnyDatabase"
-          db: "admin"
-        - name: "clusterAdmin"
-          db: "admin"
+        - name: clusterAdmin
+          db: admin
+        - name: userAdminAnyDatabase
+          db: admin
+      scramCredentialsSecretName: {{ .Values.mongodb_operator.clusterName }}-{{ .Values.mongodb_operator.username }}
   statefulSet:
     spec:
       volumeClaimTemplates:

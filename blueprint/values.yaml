@@ -17,27 +17,32 @@ kafka:
   partitions: 3
   replicas: 1
   clusterName: "my-kafka-cluster"
+  version: 4.1.0
 
 hazelcast:
   enabled: true
   clusterName: "my-hazelcast-cluster"
-  clusterSize: 3
+  clusterSize: 1
+  licenseKey: TrialLicense#10Nodes#eyJhbGxvd2VkTmF0aXZlTWVtb3J5U2l6ZSI6MTAwLCJhbGxvd2VkTnVtYmVyT2ZOb2RlcyI6MTAsImFsbG93ZWRUaWVyZWRTdG9yZVNpemUiOjAsImFsbG93ZWRUcGNDb3JlcyI6MCwiY3JlYXRpb25EYXRlIjoxNzYxODQ3ODcwLjYzNjUyOTU1OSwiZXhwaXJ5RGF0ZSI6MTc2NDM3NDM5OS45OTk5OTk5OTksImZlYXR1cmVzIjpbMCwyLDMsNCw1LDYsNyw4LDEwLDExLDEzLDE0LDE1LDE3LDIxLDIyXSwiZ3JhY2VQZXJpb2QiOjAsImhhemVsY2FzdFZlcnNpb24iOjk5LCJvZW0iOmZhbHNlLCJ0cmlhbCI6dHJ1ZSwidmVyc2lvbiI6IlY3In0=.7Wh2kBN9XyTR6J4rwj18vvrMvFk37ckhw21VmVfKJ9-sYAEscbMOj20SDn7tzXkBqsurfXYpb3Ke0dMBrA0qDQ==
+  repository: docker.io/hazelcast/hazelcast
+  version: 5.6.0
+
 
 mongodb_operator:
   # Deploys a MongoDB cluster using the official MongoDB Community Operator
   enabled: true
-  clusterName: "my-mongo-cluster"
-  replicas: 3
-  version: "6.0"
+  clusterName: "my-mongodb-cluster"
+  replicas: 1
+  version: "8.0.0"
   storageSize: "2Gi"
-  username: "my-mongo-user"
+  username: "myuser"
   passwordSecretName: "my-mongo-user-password"
   password: "" # If left empty, a 16-character random password will be generated.
 
 cloudnativepg:
   enabled: true
   clusterName: "my-cnpg-cluster"
-  instances: 3
+  instances: 1
   storageSize: "1Gi"
   databaseName: "appdb"
   user: "appuser"

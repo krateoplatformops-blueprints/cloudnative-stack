@@ -1,0 +1,15 @@
+{{- if .Values.mongodb_operator.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.mongodb_operator.clusterName }}-lb
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 27017
+      targetPort: 27017
+      protocol: TCP
+      name: mongodb
+  selector:
+    app.kubernetes.io/name: {{ .Values.mongodb_operator.clusterName }}
+{{- end }}

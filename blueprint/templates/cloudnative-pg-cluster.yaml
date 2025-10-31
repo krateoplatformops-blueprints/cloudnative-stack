@@ -11,4 +11,15 @@ spec:
     initdb:
       database: {{ .Values.cloudnativepg.databaseName | quote }}
       owner: {{ .Values.cloudnativepg.user | quote }}
+  managed:
+    services:
+      ## disable the default services
+      disabledDefaultServices: ["ro", "r"]
+      additional:
+        - selectorType: rw
+          serviceTemplate:
+            metadata:
+              name: {{ .Values.cloudnativepg.clusterName }}-lb-rw
+            spec:
+              type: LoadBalancer
 {{- end }}
