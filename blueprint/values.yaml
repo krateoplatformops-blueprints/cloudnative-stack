@@ -17,67 +17,67 @@ backend:
     port: 8080
     replicas: 1
 
-kafka:
-  enabled: true
-  clusterName: "kafka"
-  version: 4.1.0
-  replicas: 1
-  topics:
-  - topicName: "first-topic"
-    partitions: 3
+  kafka:
+    enabled: true
+    clusterName: "kafka"
+    version: 4.1.0
     replicas: 1
-  - topicName: "second-topic"
-    partitions: 3
-    replicas: 1
-  
-
-hazelcast:
-  enabled: true
-  licenseKey: TrialLicense#10Nodes#eyJhbGxvd2VkTmF0aXZlTWVtb3J5U2l6ZSI6MTAwLCJhbGxvd2VkTnVtYmVyT2ZOb2RlcyI6MTAsImFsbG93ZWRUaWVyZWRTdG9yZVNpemUiOjAsImFsbG93ZWRUcGNDb3JlcyI6MCwiY3JlYXRpb25EYXRlIjoxNzYxODQ3ODcwLjYzNjUyOTU1OSwiZXhwaXJ5RGF0ZSI6MTc2NDM3NDM5OS45OTk5OTk5OTksImZlYXR1cmVzIjpbMCwyLDMsNCw1LDYsNyw4LDEwLDExLDEzLDE0LDE1LDE3LDIxLDIyXSwiZ3JhY2VQZXJpb2QiOjAsImhhemVsY2FzdFZlcnNpb24iOjk5LCJvZW0iOmZhbHNlLCJ0cmlhbCI6dHJ1ZSwidmVyc2lvbiI6IlY3In0=.7Wh2kBN9XyTR6J4rwj18vvrMvFk37ckhw21VmVfKJ9-sYAEscbMOj20SDn7tzXkBqsurfXYpb3Ke0dMBrA0qDQ==
-  licenseKeyName: hazelcast-license-key
-  repository: docker.io/hazelcast/hazelcast
-  version: 5.6.0
-  cluters:
-  - name: "hz-first"
-    size: 1
-  - name: "hz-second"
-    size: 2
-
-
-mongodb_operator:
-  enabled: true
-  clusters: 
-  - clusterName: "mongodb-one"
-    replicas: 1
-    version: "8.0.0"
-    storageSize: "2Gi"
-    username: "myuser"
-    password: "" # If left empty, a 16-character random password will be generated.
-    opsManager:
+    topics:
+    - topicName: "first-topic"
+      partitions: 3
       replicas: 1
-      members: 3
-      version: "8.0.0"
-  - clusterName: "mongodb-two"
-    replicas: 1
-    version: "8.0.0"
-    storageSize: "4Gi"
-    username: "myuser"
-    password: "" # If left empty, a 16-character random password will be generated.
-    opsManager:
+    - topicName: "second-topic"
+      partitions: 3
       replicas: 1
-      members: 3
-      version: "8.0.0"
+    
 
-cloudnativepg:
-  enabled: true
-  clusters:
-  - clusterName: "cnpg-the-first"
-    instances: 1
-    storageSize: "1Gi"
-    databaseName: "appdb"
-    user: "appuser"
-  - clusterName: "cnpg-the-second"
-    instances: 2
-    storageSize: "1Gi"
-    databaseName: "appdb"
-    user: "appuser"
+  hazelcast:
+    enabled: true
+    licenseKey: TrialLicense#10Nodes#eyJhbGxvd2VkTmF0aXZlTWVtb3J5U2l6ZSI6MTAwLCJhbGxvd2VkTnVtYmVyT2ZOb2RlcyI6MTAsImFsbG93ZWRUaWVyZWRTdG9yZVNpemUiOjAsImFsbG93ZWRUcGNDb3JlcyI6MCwiY3JlYXRpb25EYXRlIjoxNzYxODQ3ODcwLjYzNjUyOTU1OSwiZXhwaXJ5RGF0ZSI6MTc2NDM3NDM5OS45OTk5OTk5OTksImZlYXR1cmVzIjpbMCwyLDMsNCw1LDYsNyw4LDEwLDExLDEzLDE0LDE1LDE3LDIxLDIyXSwiZ3JhY2VQZXJpb2QiOjAsImhhemVsY2FzdFZlcnNpb24iOjk5LCJvZW0iOmZhbHNlLCJ0cmlhbCI6dHJ1ZSwidmVyc2lvbiI6IlY3In0=.7Wh2kBN9XyTR6J4rwj18vvrMvFk37ckhw21VmVfKJ9-sYAEscbMOj20SDn7tzXkBqsurfXYpb3Ke0dMBrA0qDQ==
+    licenseKeyName: hazelcast-license-key
+    repository: docker.io/hazelcast/hazelcast
+    version: 5.6.0
+    cluters:
+    - name: "hz-first"
+      size: 1
+    - name: "hz-second"
+      size: 2
+
+
+  mongodb_operator:
+    enabled: true
+    clusters: 
+    - clusterName: "mongodb-one"
+      replicas: 1
+      version: "8.0.0"
+      storageSize: "2Gi"
+      username: "myuser"
+      password: "" # If left empty, a 16-character random password will be generated.
+      opsManager:
+        replicas: 1
+        members: 3
+        version: "8.0.0"
+    - clusterName: "mongodb-two"
+      replicas: 1
+      version: "8.0.0"
+      storageSize: "4Gi"
+      username: "myuser"
+      password: "" # If left empty, a 16-character random password will be generated.
+      opsManager:
+        replicas: 1
+        members: 3
+        version: "8.0.0"
+
+  cloudnativepg:
+    enabled: true
+    clusters:
+    - clusterName: "cnpg-the-first"
+      instances: 1
+      storageSize: "1Gi"
+      databaseName: "appdb"
+      user: "appuser"
+    - clusterName: "cnpg-the-second"
+      instances: 2
+      storageSize: "1Gi"
+      databaseName: "appdb"
+      user: "appuser"

@@ -1,12 +1,12 @@
-{{- if .Values.kafka.enabled }}
+{{- if and .Values.backend.kafka.enabled .Values.backend.enabled }}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaNodePool
 metadata:
   name: dual-role
   labels:
-    strimzi.io/cluster: {{ .Values.kafka.clusterName }}
+    strimzi.io/cluster: {{ .Values.backend.kafka.clusterName }}
 spec:
-  replicas: {{ .Values.kafka.replicas }}
+  replicas: {{ .Values.backend.kafka.replicas }}
   roles:
     - controller
     - broker
@@ -22,10 +22,10 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
-  name: {{ .Values.kafka.clusterName }}
+  name: {{ .Values.backend.kafka.clusterName }}
 spec:
   kafka:
-    version: {{ .Values.kafka.version }}
+    version: {{ .Values.backend.kafka.version }}
     metadataVersion: 4.1-IV1
     listeners:
       - name: plain
@@ -49,17 +49,17 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaBridge
 metadata:
-  name: {{ .Values.kafka.clusterName }}
+  name: {{ .Values.backend.kafka.clusterName }}
 spec:
   replicas: 1
-  bootstrapServers: {{ .Values.kafka.clusterName }}-kafka-bootstrap:9092
+  bootstrapServers: {{ .Values.backend.kafka.clusterName }}-kafka-bootstrap:9092
   http:
     port: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.kafka.clusterName }}-lb
+  name: {{ .Values.backend.kafka.clusterName }}-lb
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
     service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
@@ -70,5 +70,5 @@ spec:
       port: 8080
       targetPort: 8080
   selector:
-    strimzi.io/name: {{ .Values.kafka.clusterName }}-bridge
+    strimzi.io/name: {{ .Values.backend.kafka.clusterName }}-bridge
 {{- end }}

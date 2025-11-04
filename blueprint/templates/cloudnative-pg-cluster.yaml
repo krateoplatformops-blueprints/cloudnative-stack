@@ -1,5 +1,5 @@
-{{- if .Values.cloudnativepg.enabled }}
-{{- range $i, $v := .Values.cloudnativepg.clusters }}
+{{- if and .Values.backend.cloudnativepg.enabled .Values.backend.enabled }}
+{{- range $i, $v := .Values.backend.cloudnativepg.clusters }}
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
