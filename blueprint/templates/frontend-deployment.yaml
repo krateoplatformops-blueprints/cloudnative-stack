@@ -1,21 +1,24 @@
 {{- if .Values.frontend.enabled }}
+{{- range $i, $v := .Values.frontend.deployments }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-frontend
+  name: {{ $v.name }}-frontend
 spec:
-  replicas: {{ .Values.frontend.replicas }}
+  replicas: {{ $v.replicas }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-frontend
+      app: {{ $v.name }}-frontend
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-frontend
+        app: {{ $v.name }}-frontend
     spec:
       containers:
       - name: frontend
-        image: "{{ .Values.frontend.image }}"
+        image: {{ $v.image | quote }}
         ports:
-        - containerPort: {{ .Values.frontend.port }}
+        - containerPort: {{ $v.port }}
+---
+{{- end }}
 {{- end }}

@@ -1,13 +1,16 @@
 {{- if .Values.backend.enabled }}
+{{- range $i, $v := .Values.backend.deployments }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-backend-svc
+  name: {{ $v.name }}-backend-svc
 spec:
   selector:
-    app: {{ .Release.Name }}-backend
+    app: {{ $v.name }}-backend
   ports:
     - protocol: TCP
-      port: {{ .Values.backend.port }}
-      targetPort: {{ .Values.backend.port }}
+      port: {{ $v.port }}
+      targetPort: {{ $v.port }}
+---
+{{- end }}
 {{- end }}

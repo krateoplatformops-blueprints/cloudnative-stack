@@ -1,26 +1,27 @@
 {{- if .Values.mongodb_operator.enabled }}
+{{- range $i, $v := .Values.mongodb_operator.clusters }}
 apiVersion: mongodbcommunity.mongodb.com/v1
 kind: MongoDBCommunity
 metadata:
-  name: {{ .Values.mongodb_operator.clusterName | quote }}
+  name: {{ $v.clusterName | quote }}
 spec:
-  members: {{ .Values.mongodb_operator.replicas }}
+  members: {{ $v.replicas }}
   type: ReplicaSet
-  version: {{ .Values.mongodb_operator.version | quote }}
+  version: {{ $v.version | quote }}
   security:
     authentication:
       modes: ["SCRAM"]
   users:
-    - name: {{ .Values.mongodb_operator.username | quote }}
+    - name: {{ $v.username | quote }}
       db: "admin"
       passwordSecretRef:
-        name: {{ .Values.mongodb_operator.passwordSecretName | quote }}
+        name: {{ $v.clusterName | quote }}
       roles:
         - name: clusterAdmin
           db: admin
         - name: userAdminAnyDatabase
           db: admin
-      scramCredentialsSecretName: {{ .Values.mongodb_operator.clusterName }}-{{ .Values.mongodb_operator.username }}
+      scramCredentialsSecretName: {{ $v.clusterName }}-{{ $v.username }}
   statefulSet:
     spec:
       volumeClaimTemplates:
@@ -29,5 +30,22 @@ spec:
           spec:
             resources:
               requests:
-                storage: {{ .Values.mongodb_operator.storageSize | quote }}
+                storage: {{ $v.storageSize | quote }}
+---
+apiVersion: mongodb.com/v1
+kind: MongoDBOpsManager
+metadata:
+  name: {{ $v.clusterName }}-om
+spec:
+  replicas: {{ $v.opsManager.replicas }}
+  version: {{ $v.opsManager.version }}
+  adminCredentials: {{ $v.clusterName }}-{{ $v.username }}
+  externalConnectivity:
+    type: LoadBalancer
+  applicationDatabase:
+    topology: SingleCluster
+    members: {{ $v.opsManager.members }}
+    version: {{ $v.version }}
+---
+{{- end }}
 {{- end }}

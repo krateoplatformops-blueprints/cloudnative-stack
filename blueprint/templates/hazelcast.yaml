@@ -1,15 +1,33 @@
 {{- if .Values.hazelcast.enabled }}
+{{ $repository := .Values.hazelcast.repository }}
+{{ $version := .Values.hazelcast.version }}
+{{ $licenseKeyName := .Values.hazelcast.licenseKeyName }}
+{{ $namespace := .Release.Namespace }}
+{{- range $i, $v := .Values.hazelcast.cluters }}
 apiVersion: hazelcast.com/v1alpha1
 kind: Hazelcast
 metadata:
-  name: {{ .Values.hazelcast.clusterName }}
+  name: {{ $v.name }}
 spec:
-  clusterSize: {{ .Values.hazelcast.clusterSize }}
-  clusterName: {{ .Values.hazelcast.clusterName }}
-  repository: {{ .Values.hazelcast.repository }}
-  version: {{ .Values.hazelcast.version }}
-  licenseKeySecretName: {{ .Values.hazelcast.clusterName }}-license-key
-  exposeExternally:
-    type: Smart
-    discoveryServiceType: LoadBalancer
+  clusterSize: {{ $v.size }}
+  clusterName: {{ $v.name }}
+  repository: {{ $repository }}
+  version: {{ $version }}
+  licenseKeySecretName: {{ $licenseKeyName }}
+---
+apiVersion: hazelcast.com/v1alpha1
+kind: ManagementCenter
+metadata:
+  name: {{ $v.name }}-mc
+spec:
+  repository: 'hazelcast/management-center'
+  version: '5.9.0'
+  licenseKeySecretName: {{ $licenseKeyName }}
+  externalConnectivity:
+    type: LoadBalancer
+  hazelcastClusters:
+  - address: {{ $v.name }}.{{ $namespace }}:5701
+    name: {{ $v.name }}
+---
+{{- end }}
 {{- end }}

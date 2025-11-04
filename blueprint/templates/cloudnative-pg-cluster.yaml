@@ -1,25 +1,17 @@
 {{- if .Values.cloudnativepg.enabled }}
+{{- range $i, $v := .Values.cloudnativepg.clusters }}
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: {{ .Values.cloudnativepg.clusterName | quote }}
+  name: {{ $v.clusterName }}
 spec:
-  instances: {{ .Values.cloudnativepg.instances }}
+  instances: {{ $v.instances }}
   storage:
-    size: {{ .Values.cloudnativepg.storageSize | quote }}
+    size: {{ $v.storageSize }}
   bootstrap:
     initdb:
-      database: {{ .Values.cloudnativepg.databaseName | quote }}
-      owner: {{ .Values.cloudnativepg.user | quote }}
-  managed:
-    services:
-      ## disable the default services
-      disabledDefaultServices: ["ro", "r"]
-      additional:
-        - selectorType: rw
-          serviceTemplate:
-            metadata:
-              name: {{ .Values.cloudnativepg.clusterName }}-lb-rw
-            spec:
-              type: LoadBalancer
+      database: {{ $v.databaseName }}
+      owner: {{ $v.user }}
+---
+{{- end }}
 {{- end }}
