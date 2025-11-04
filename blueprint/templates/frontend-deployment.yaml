@@ -1,0 +1,24 @@
+{{- if .Values.frontend.enabled }}
+{{- range $i, $v := .Values.frontend.deployments }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $v.name }}-frontend
+spec:
+  replicas: {{ $v.replicas }}
+  selector:
+    matchLabels:
+      app: {{ $v.name }}-frontend
+  template:
+    metadata:
+      labels:
+        app: {{ $v.name }}-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: {{ $v.image | quote }}
+        ports:
+        - containerPort: {{ $v.port }}
+---
+{{- end }}
+{{- end }}

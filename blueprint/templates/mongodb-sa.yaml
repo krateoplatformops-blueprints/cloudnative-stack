@@ -1,0 +1,39 @@
+{{- if and .Values.backend.mongodb_operator.enabled .Values.backend.enabled  }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mongodb-kubernetes-appdb # do not change, only this works and I don't know why
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mongodb-kubernetes-ops-manager # do not change, only this works and I don't know why
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Values.backend.mongodb_operator.clusterName }}-operator-role
+rules:
+  - apiGroups: [""]
+    resources: ["secrets", "configmaps", "pods", "services"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["apps"]
+    resources: ["statefulsets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Values.backend.mongodb_operator.clusterName }}-operator-role-operator-rolebinding
+subjects:
+  - kind: ServiceAccount
+    name: mongodb-kubernetes-appdb
+    namespace: {{ .Release.Namespace }}
+  - kind: ServiceAccount
+    name: mongodb-kubernetes-ops-manager
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ .Values.backend.mongodb_operator.clusterName }}-operator-role
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

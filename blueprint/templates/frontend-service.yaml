@@ -1,0 +1,16 @@
+{{- if .Values.frontend.enabled }}
+{{- range $i, $v := .Values.frontend.deployments }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $v.name }}-frontend-svc
+spec:
+  selector:
+    app: {{ $v.name }}-frontend
+  ports:
+    - protocol: TCP
+      port: {{ $v.port }}
+      targetPort: {{ $v.port }}
+---
+{{- end }}
+{{- end }}

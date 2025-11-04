@@ -1,0 +1,24 @@
+{{- if .Values.backend.enabled }}
+{{- range $i, $v := .Values.backend.deployments }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $v.name }}-backend
+spec:
+  replicas: {{ $v.replicas }}
+  selector:
+    matchLabels:
+      app: {{ $v.name }}-backend
+  template:
+    metadata:
+      labels:
+        app: {{ $v.name }}-backend
+    spec:
+      containers:
+      - name: backend
+        image: {{ $v.image | quote }}
+        ports:
+        - containerPort: {{ $v.port }}
+---
+{{- end }}        
+{{- end }}
