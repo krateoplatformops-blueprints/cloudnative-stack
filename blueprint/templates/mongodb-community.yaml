@@ -1,7 +1,7 @@
 {{- if .Values.backend.enabled  }}
 {{- range $j, $d := .Values.backend.deployments }}
-{{- if $d.mongodb_operator.enabled }}
-{{- range $i, $v := $d.mongodb_operator.clusters }}
+{{- if $d.mongodb.enabled }}
+{{- range $i, $v := $d.mongodb.instances }}
 apiVersion: mongodbcommunity.mongodb.com/v1
 kind: MongoDBCommunity
 metadata:

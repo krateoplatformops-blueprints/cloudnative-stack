@@ -195,7 +195,7 @@ backend:
     # description: MongoDB (via MongoDB Operator) configuration
     # type: object
     # @schema
-    mongodb_operator:
+    mongodb:
       # @schema
       # description: Whether to deploy/configure MongoDB Operator resources
       # type: boolean
@@ -209,7 +209,7 @@ backend:
       #   type: object
       #   required: [clusterName, replicas, version, storageSize, username, password, opsManager]
       # @schema
-      clusters: 
+      instances: 
       - # @schema
         # description: Cluster name
         # type: string
@@ -293,7 +293,7 @@ backend:
       #   type: object
       #   required: [clusterName, instances, storageSize, databaseName, user]
       # @schema
-      clusters:
+      instances:
       - # @schema
         # description: Cluster name
         # type: string
@@ -305,7 +305,7 @@ backend:
         # minimum: 1
         # default: 1
         # @schema
-        instances: 1
+        replicas: 1
         # @schema
         # description: Persistent storage request size per instance
         # type: string
