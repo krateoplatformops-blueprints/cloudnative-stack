@@ -72,19 +72,47 @@ metadata:
   name: my-production-app
   namespace: krateo-system
 spec:
-  # Override default values here
   frontend:
-    replicas: 3
-    image: "my-custom-frontend:1.2.0"
+    enabled: true
+    deployments:
+    - name: frontend-one
+      image: nginx:latest
+      port: 80
+      replicas: 1
   backend:
-    replicas: 2
-  mongodb_operator:
-    storageSize: "10Gi"
-    # Provide a specific password instead of a random one
-    password: "MyStrongPassword123!"
-  cloudnativepg:
-    instances: 3
-    storageSize: "20Gi"
+    enabled: true
+    deployments:
+    - name: backend-one
+      image: openeuler/spring-boot:latest
+      port: 8080
+      replicas: 1
+      kafka:
+        enabled: true
+        clusterName: "kafka"
+        topics:
+        - topicName: "first-topic"
+          partitions: 3
+          replicas: 1    
+      hazelcast:
+        enabled: true
+        clusters:
+        - name: "hz-first"
+          replicas: 1
+      mongodb:
+        enabled: true
+        instances: 
+        - clusterName: "mongodb-one"
+          replicas: 1
+          storageSize: "2Gi"
+          username: "myuser"
+      cloudnativepg:
+        enabled: true
+        instances:
+        - clusterName: "cnpg-the-first"
+          replicas: 1
+          storageSize: "1Gi"
+          databaseName: "appdb"
+          user: "appuser"
 ```
 
 # Requirements
