@@ -20,19 +20,19 @@ For this blueprint to function correctly, your Kubernetes cluster **must** have 
 
 1.  **Strimzi (for Kafka):**
     -   **Purpose:** Manages Kafka clusters and topics.
-    -   **Installation Guide:** [Strimzi Deployment Documentation](https://strimzi.io/docs/operators/latest/deploying-and-upgrading.html)
+    -   **Installation Guide:** [Strimzi Deployment Documentation](https://strimzi.io/docs/operators/latest/deploying)
 
 2.  **Hazelcast Platform Operator:**
     -   **Purpose:** Manages Hazelcast in-memory computing clusters.
-    -   **Installation Guide:** [Hazelcast Operator Deployment](https://docs.hazelcast.com/hazelcast/latest/deploy/kubernetes-operator)
+    -   **Installation Guide:** [Hazelcast Operator Deployment](https://docs.hazelcast.com/operator/5.14/)
 
-3.  **MongoDB Community Kubernetes Operator:**
+3.  **MongoDB Kubernetes Operator:**
     -   **Purpose:** Manages MongoDB Community replica sets and clusters.
     -   **Installation Guide:** [https://github.com/mongodb/mongodb-kubernetes](https://github.com/mongodb/mongodb-kubernetes)
 
 4.  **CloudNative-PG (for PostgreSQL):**
     -   **Purpose:** Manages the full lifecycle of a PostgreSQL cluster.
-    -   **Installation Guide:** [CloudNative-PG Installation](https://cloudnative-pg.io/documentation/current/installation/)
+    -   **Installation Guide:** [CloudNative-PG Installation](https://cloudnative-pg.io/documentation/1.27/)
 
 ## Installation and Usage
 
