@@ -1,6 +1,8 @@
-{{- if and .Values.backend.kafka.enabled .Values.backend.enabled  }}
-{{ $kafkaClusterName := .Values.backend.kafka.clusterName }}
-{{- range $i, $v := .Values.backend.kafka.topics }}
+{{- if .Values.backend.enabled  }}
+{{- range $j, $d := .Values.backend.deployments }}
+{{ $kafkaClusterName := $d.kafka.clusterName }}
+{{- if $d.kafka.enabled  }}
+{{- range $i, $v := $d.kafka.topics }}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
@@ -11,5 +13,7 @@ spec:
   partitions: {{ $v.partitions }}
   replicas: {{ $v.replicas }}
 ---
+{{- end }}
+{{- end }}
 {{- end }}
 {{- end }}

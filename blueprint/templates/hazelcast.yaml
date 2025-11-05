@@ -1,9 +1,11 @@
-{{- if and .Values.backend.hazelcast.enabled .Values.backend.enabled }}
-{{ $repository := .Values.backend.hazelcast.repository }}
-{{ $version := .Values.backend.hazelcast.version }}
-{{ $licenseKeyName := .Values.backend.hazelcast.licenseKeyName }}
+{{- if .Values.backend.enabled }}
 {{ $namespace := .Release.Namespace }}
-{{- range $i, $v := .Values.backend.hazelcast.cluters }}
+{{- range $j, $d := .Values.backend.deployments }}
+{{- if $d.hazelcast.enabled }}
+{{ $repository := $d.hazelcast.repository }}
+{{ $version := $d.hazelcast.version }}
+{{ $licenseKeyName := $d.hazelcast.licenseKeyName }}
+{{- range $i, $v := $d.hazelcast.clusters }}
 apiVersion: hazelcast.com/v1alpha1
 kind: Hazelcast
 metadata:
@@ -29,5 +31,7 @@ spec:
   - address: {{ $v.name }}.{{ $namespace }}:5701
     name: {{ $v.name }}
 ---
+{{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
