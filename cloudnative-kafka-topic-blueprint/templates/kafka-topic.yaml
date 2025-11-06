@@ -1,3 +1,4 @@
+{{ $kafkaClusterName := .Values.kafka.clusterName }}
 {{- range $i, $v := .Vaues.kafka.topics }}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic

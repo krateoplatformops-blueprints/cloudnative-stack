@@ -28,7 +28,7 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaBridge
 metadata:
-  name: {{ .Values.kafka.clusterName }}
+  name: {{ .Values.kafka.clusterName }}
 spec:
   replicas: 1
   bootstrapServers: {{ .Values.kafka.clusterName }}-kafka-bootstrap:9092
