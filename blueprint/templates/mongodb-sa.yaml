@@ -1,4 +1,7 @@
-{{- if and .Values.backend.mongodb_operator.enabled .Values.backend.enabled  }}
+{{- if .Values.backend.enabled  }}
+{{ $namespace := .Release.Namespace }}
+{{- range $j, $d := .Values.backend.deployments }}
+{{- if $d.mongodb.enabled }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -12,7 +15,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ .Values.backend.mongodb_operator.clusterName }}-operator-role
+  name: {{ $d.mongodb.clusterName }}-operator-role
 rules:
   - apiGroups: [""]
     resources: ["secrets", "configmaps", "pods", "services"]
@@ -24,16 +27,18 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ .Values.backend.mongodb_operator.clusterName }}-operator-role-operator-rolebinding
+  name: {{ $d.mongodb.clusterName }}-operator-role-operator-rolebinding
 subjects:
   - kind: ServiceAccount
     name: mongodb-kubernetes-appdb
-    namespace: {{ .Release.Namespace }}
+    namespace: {{ $namespace }}
   - kind: ServiceAccount
     name: mongodb-kubernetes-ops-manager
-    namespace: {{ .Release.Namespace }}
+    namespace: {{ $namespace }}
 roleRef:
   kind: Role
-  name: {{ .Values.backend.mongodb_operator.clusterName }}-operator-role
+  name: {{ $d.mongodb.clusterName }}-operator-role
   apiGroup: rbac.authorization.k8s.io
+{{- end }}
+{{- end }}
 {{- end }}

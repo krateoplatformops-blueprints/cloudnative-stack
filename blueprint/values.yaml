@@ -1,83 +1,327 @@
-# Default values for multi-tier-app
-appName: multi-tier-app
-
+# @schema
+# description: Frontend tier configuration
+# type: object
+# @schema
 frontend:
+  # @schema
+  # description: Whether to deploy the frontend tier
+  # type: boolean
+  # default: true
+  # @schema
   enabled: true
+  # @schema
+  # description: List of frontend Deployments to create
+  # type: array
+  # items:
+  #   type: object
+  #   required: [name, image, port, replicas]
+  # @schema
   deployments:
-  - name: frontend-one
+  - # @schema
+    # description: Name of the frontend Deployment
+    # type: string
+    # example: frontend-one
+    # @schema
+    name: frontend-one
+    # @schema
+    # description: Container image for the frontend
+    # type: string
+    # example: nginx:latest
+    # @schema
     image: nginx:latest
+    # @schema
+    # description: Service/container port exposed by the frontend
+    # type: integer
+    # minimum: 1
+    # maximum: 65535
+    # default: 80
+    # @schema
     port: 80
+    # @schema
+    # description: Desired number of replicas for the frontend Deployment
+    # type: integer
+    # minimum: 1
+    # default: 1
+    # @schema
     replicas: 1
 
+# @schema
+# description: Backend tier configuration (apps and backing services)
+# type: object
+# @schema
 backend:
+  # @schema
+  # description: Whether to deploy the backend tier
+  # type: boolean
+  # default: true
+  # @schema
   enabled: true
+  # @schema
+  # description: List of backend Deployments to create
+  # type: array
+  # items:
+  #   type: object
+  #   required: [name, image, port, replicas, kafka]
+  # @schema
   deployments:
-  - name: backend-one
-    image: springcommunity/spring-boot-mongo-jwt-auth:latest
+  - # @schema
+    # description: Name of the backend Deployment
+    # type: string
+    # example: backend-one
+    # @schema
+    name: backend-one
+    # @schema
+    # description: Container image for the backend
+    # type: string
+    # @schema
+    image: openeuler/spring-boot:latest
+    # @schema
+    # description: Service/container port exposed by the backend
+    # type: integer
+    # minimum: 1
+    # maximum: 65535
+    # default: 8080
+    # @schema
     port: 8080
+    # @schema
+    # description: Desired number of replicas for the backend Deployment
+    # type: integer
+    # minimum: 1
+    # default: 1
+    # @schema
     replicas: 1
+    # @schema
+    # description: Apache Kafka configuration (cluster + topics)
+    # type: object
+    # @schema
+    kafka:
+      # @schema
+      # description: Whether to deploy/configure Kafka resources
+      # type: boolean
+      # default: true
+      # @schema
+      enabled: true
+      # @schema
+      # description: Logical name of the Kafka cluster
+      # type: string
+      # default: kafka
+      # @schema
+      clusterName: "kafka"
+      # @schema
+      # description: Topics to create on the cluster
+      # type: array
+      # items:
+      #   type: object
+      #   required: [topicName, partitions, replicas]
+      # @schema
+      topics:
+      - # @schema
+        # description: Kafka topic name
+        # type: string
+        # @schema
+        topicName: "first-topic"
+        # @schema
+        # description: Number of partitions for the topic
+        # type: integer
+        # minimum: 1
+        # default: 3
+        # @schema
+        partitions: 3
+        # @schema
+        # description: Replication factor for the topic
+        # type: integer
+        # minimum: 1
+        # default: 1
+        # @schema
+        replicas: 1    
 
-  kafka:
-    enabled: true
-    clusterName: "kafka"
-    version: 4.1.0
-    replicas: 1
-    topics:
-    - topicName: "first-topic"
-      partitions: 3
-      replicas: 1
-    - topicName: "second-topic"
-      partitions: 3
-      replicas: 1
-    
+    # @schema
+    # description: Hazelcast in-memory data grid configuration
+    # type: object
+    # @schema
+    hazelcast:
+      # @schema
+      # description: Whether to deploy/configure Hazelcast resources
+      # type: boolean
+      # default: true
+      # @schema
+      enabled: true
+      # @schema
+      # description: Hazelcast license key (leave empty if using Community)
+      # type: string
+      # sensitive: true
+      # @schema
+      licenseKey: TrialLicense#10Nodes#eyJhbGxvd2VkTmF0aXZlTWVtb3J5U2l6ZSI6MTAwLCJhbGxvd2VkTnVtYmVyT2ZOb2RlcyI6MTAsImFsbG93ZWRUaWVyZWRTdG9yZVNpemUiOjAsImFsbG93ZWRUcGNDb3JlcyI6MCwiY3JlYXRpb25EYXRlIjoxNzYxODQ3ODcwLjYzNjUyOTU1OSwiZXhwaXJ5RGF0ZSI6MTc2NDM3NDM5OS45OTk5OTk5OTksImZlYXR1cmVzIjpbMCwyLDMsNCw1LDYsNyw4LDEwLDExLDEzLDE0LDE1LDE3LDIxLDIyXSwiZ3JhY2VQZXJpb2QiOjAsImhhemVsY2FzdFZlcnNpb24iOjk5LCJvZW0iOmZhbHNlLCJ0cmlhbCI6dHJ1ZSwidmVyc2lvbiI6IlY3In0=.7Wh2kBN9XyTR6J4rwj18vvrMvFk37ckhw21VmVfKJ9-sYAEscbMOj20SDn7tzXkBqsurfXYpb3Ke0dMBrA0qDQ==
+      # @schema
+      # description: Secret key name under which the license key is stored
+      # type: string
+      # default: hazelcast-license-key
+      # @schema
+      licenseKeyName: hazelcast-license-key
+      # @schema
+      # description: Repository for Hazelcast image
+      # type: string
+      # default: docker.io/hazelcast/hazelcast
+      # @schema
+      repository: docker.io/hazelcast/hazelcast
+      # @schema
+      # description: Hazelcast image version/tag
+      # type: string
+      # default: 5.6.0
+      # @schema
+      version: 5.6.0
+      # @schema
+      # description: list of Hazelcast clusters to create
+      # type: array
+      # items:
+      #   type: object
+      #   required: [name, size]
+      # @schema
+      clusters:
+      - # @schema
+        # description: Cluster name
+        # type: string
+        # @schema
+        name: "hz-first"
+        # @schema
+        # description: Number of members in the cluster
+        # type: integer
+        # minimum: 1
+        # default: 1
+        # @schema
+        size: 1
 
-  hazelcast:
-    enabled: true
-    licenseKey: TrialLicense#10Nodes#eyJhbGxvd2VkTmF0aXZlTWVtb3J5U2l6ZSI6MTAwLCJhbGxvd2VkTnVtYmVyT2ZOb2RlcyI6MTAsImFsbG93ZWRUaWVyZWRTdG9yZVNpemUiOjAsImFsbG93ZWRUcGNDb3JlcyI6MCwiY3JlYXRpb25EYXRlIjoxNzYxODQ3ODcwLjYzNjUyOTU1OSwiZXhwaXJ5RGF0ZSI6MTc2NDM3NDM5OS45OTk5OTk5OTksImZlYXR1cmVzIjpbMCwyLDMsNCw1LDYsNyw4LDEwLDExLDEzLDE0LDE1LDE3LDIxLDIyXSwiZ3JhY2VQZXJpb2QiOjAsImhhemVsY2FzdFZlcnNpb24iOjk5LCJvZW0iOmZhbHNlLCJ0cmlhbCI6dHJ1ZSwidmVyc2lvbiI6IlY3In0=.7Wh2kBN9XyTR6J4rwj18vvrMvFk37ckhw21VmVfKJ9-sYAEscbMOj20SDn7tzXkBqsurfXYpb3Ke0dMBrA0qDQ==
-    licenseKeyName: hazelcast-license-key
-    repository: docker.io/hazelcast/hazelcast
-    version: 5.6.0
-    cluters:
-    - name: "hz-first"
-      size: 1
-    - name: "hz-second"
-      size: 2
-
-
-  mongodb_operator:
-    enabled: true
-    clusters: 
-    - clusterName: "mongodb-one"
-      replicas: 1
-      version: "8.0.0"
-      storageSize: "2Gi"
-      username: "myuser"
-      password: "" # If left empty, a 16-character random password will be generated.
-      opsManager:
+    # @schema
+    # description: MongoDB (via MongoDB Operator) configuration
+    # type: object
+    # @schema
+    mongodb:
+      # @schema
+      # description: Whether to deploy/configure MongoDB Operator resources
+      # type: boolean
+      # default: true
+      # @schema
+      enabled: true
+      # @schema
+      # description: List of MongoDB clusters to create
+      # type: array
+      # items:
+      #   type: object
+      #   required: [clusterName, replicas, version, storageSize, username, password, opsManager]
+      # @schema
+      instances: 
+      - # @schema
+        # description: Cluster name
+        # type: string
+        # @schema
+        clusterName: "mongodb-one"
+        # @schema
+        # description: Number of MongoDB replicas
+        # type: integer
+        # minimum: 1
+        # default: 1
+        # @schema
         replicas: 1
-        members: 3
+        # @schema
+        # description: MongoDB version
+        # type: string
+        # example: "8.0.0"
+        # @schema
         version: "8.0.0"
-    - clusterName: "mongodb-two"
-      replicas: 1
-      version: "8.0.0"
-      storageSize: "4Gi"
-      username: "myuser"
-      password: "" # If left empty, a 16-character random password will be generated.
-      opsManager:
-        replicas: 1
-        members: 3
-        version: "8.0.0"
+        # @schema
+        # description: Persistent storage request size
+        # type: string
+        # pattern: '^[0-9]+Gi$'
+        # default: "2Gi"
+        # @schema
+        storageSize: "2Gi"
+        # @schema
+        # description: Admin/database username to create
+        # type: string
+        # default: myuser
+        # @schema
+        username: "myuser"
+        # @schema
+        # description: Admin/database password; if empty, a random 16-char password will be generated
+        # type: string
+        # default: ""
+        # sensitive: true
+        # @schema
+        password: ""
+        # @schema
+        # description: MongoDB Ops Manager/ReplicaSet configuration
+        # type: object
+        # required: [replicas, members, version]
+        # @schema
+        opsManager:
+          # @schema
+          # description: Number of Ops Manager pods
+          # type: integer
+          # minimum: 1
+          # default: 1
+          # @schema
+          replicas: 1
+          # @schema
+          # description: Number of replica set members
+          # type: integer
+          # minimum: 1
+          # default: 3
+          # @schema
+          members: 3
+          # @schema
+          # description: Ops Manager version
+          # type: string
+          # example: "8.0.0"
+          # @schema
+          version: "8.0.0"
 
-  cloudnativepg:
-    enabled: true
-    clusters:
-    - clusterName: "cnpg-the-first"
-      instances: 1
-      storageSize: "1Gi"
-      databaseName: "appdb"
-      user: "appuser"
-    - clusterName: "cnpg-the-second"
-      instances: 2
-      storageSize: "1Gi"
-      databaseName: "appdb"
-      user: "appuser"
+    # @schema
+    # description: CloudNativePG (PostgreSQL operator) configuration
+    # type: object
+    # @schema
+    cloudnativepg:
+      # @schema
+      # description: Whether to deploy/configure CloudNativePG clusters
+      # type: boolean
+      # default: true
+      # @schema
+      enabled: true
+      # @schema
+      # description: List of CloudNativePG clusters to create
+      # type: array
+      # items:
+      #   type: object
+      #   required: [clusterName, instances, storageSize, databaseName, user]
+      # @schema
+      instances:
+      - # @schema
+        # description: Cluster name
+        # type: string
+        # @schema
+        clusterName: "cnpg-the-first"
+        # @schema
+        # description: Number of PostgreSQL instances (pods)
+        # type: integer
+        # minimum: 1
+        # default: 1
+        # @schema
+        replicas: 1
+        # @schema
+        # description: Persistent storage request size per instance
+        # type: string
+        # pattern: '^[0-9]+Gi$'
+        # default: "1Gi"
+        # @schema
+        storageSize: "1Gi"
+        # @schema
+        # description: Default database name to create
+        # type: string
+        # default: appdb
+        # @schema
+        databaseName: "appdb"
+        # @schema
+        # description: Database user to create
+        # type: string
+        # default: appuser
+        # @schema
+        user: "appuser"

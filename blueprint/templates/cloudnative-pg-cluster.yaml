@@ -1,11 +1,13 @@
-{{- if and .Values.backend.cloudnativepg.enabled .Values.backend.enabled }}
-{{- range $i, $v := .Values.backend.cloudnativepg.clusters }}
+{{- if .Values.backend.enabled }}
+{{- range $j, $d := .Values.backend.deployments }}
+{{- if $d.cloudnativepg.enabled }}
+{{- range $i, $v := $d.cloudnativepg.instances }}
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: {{ $v.clusterName }}
 spec:
-  instances: {{ $v.instances }}
+  instances: {{ $v.replicas }}
   storage:
     size: {{ $v.storageSize }}
   bootstrap:
@@ -13,5 +15,7 @@ spec:
       database: {{ $v.databaseName }}
       owner: {{ $v.user }}
 ---
+{{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
