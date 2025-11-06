@@ -1,5 +1,5 @@
 {{ $kafkaClusterName := .Values.kafka.clusterName }}
-{{- range $i, $v := .Vaues.kafka.topics }}
+{{- range $i, $v := .Values.kafka.topics }}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
