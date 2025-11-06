@@ -1,11 +1,12 @@
 {{- if .Values.backend.enabled  }}
+{{ $name := .Release.Namespace }}
 {{- range $j, $d := .Values.backend.deployments }}
 {{ $kafkaClusterName := $d.kafka.clusterName }}
 {{- if $d.kafka.enabled  }}
 apiVersion: composition.krateo.io/v0-1-0
 kind: CloudNativeKafkaTopic
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ $name }}
 spec:
   kafka:
     clusterName: {{ $kafkaClusterName }}

@@ -9,7 +9,7 @@
 apiVersion: composition.krateo.io/v0-1-0
 kind: CloudNativeHazelcast
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ $name }}
 spec:
   hazelcast:
     licenseKey: {{ $licenseKey }}
