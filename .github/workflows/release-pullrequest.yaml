@@ -1,0 +1,68 @@
+name: release-pullrequest
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    env:
+      # Change these if you want different behavior
+      DEFAULT_TAG: "0.0.0"
+      TAG_REGEX: '^v?[0-9]+\.[0-9]+\.[0-9]+$'  # leave empty to skip filtering
+
+    steps:
+      - name: Authenticate with GitHub App
+        id: authenticate
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.PRIVATE_KEY }}
+
+      - name: Checkout (with tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.authenticate.outputs.token }}
+
+      - name: Determine Chart Version (with fallback)
+        id: set_version
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --tags --force
+
+          # List all tags
+          ALL_TAGS="$(git tag -l | tr -d '\r' || true)"
+
+          # Optionally filter by regex
+          if [[ -n "${TAG_REGEX}" ]]; then
+            FILTERED_TAGS="$(printf "%s\n" "${ALL_TAGS}" | grep -E "${TAG_REGEX}" || true)"
+          else
+            FILTERED_TAGS="${ALL_TAGS}"
+          fi
+
+          if [[ -z "${FILTERED_TAGS}" ]]; then
+            VERSION="${DEFAULT_TAG}"
+            echo "No tags matched regex '${TAG_REGEX}'. Using default: ${VERSION}"
+          else
+            # Pick the highest version
+            VERSION="$(printf "%s\n" "${FILTERED_TAGS}" | sort -V | tail -n1)"
+            echo "Using latest tag: ${VERSION}"
+          fi
+
+          echo "tag=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Print Version
+        run: echo "CHART_VERSION=${{ steps.set_version.outputs.tag }}"
+
+      - name: Replace Chart Version in Chart.yaml
+        run: sed -i 's/CHART_VERSION/${{ steps.set_version.outputs.tag }}/g' ./blueprint/Chart.yaml
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.1.0
+
+      - name: Helm lint
+        run: helm lint ./blueprint
