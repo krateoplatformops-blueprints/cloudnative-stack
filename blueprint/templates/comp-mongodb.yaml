@@ -4,7 +4,7 @@
 {{- if $d.mongodb.enabled }}
 {{- range $i, $v := $d.mongodb.instances }}
 apiVersion: composition.krateo.io/v0-1-0
-kind: CloudNativeMongoDB
+kind: CloudNativeMongodb
 metadata:
   name: {{ $name }}
 spec:

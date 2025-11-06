@@ -4,7 +4,7 @@
 {{ $kafkaClusterName := $d.kafka.clusterName }}
 {{- if $d.kafka.enabled  }}
 apiVersion: composition.krateo.io/v0-1-0
-kind: CloudNativeKafkaTopic
+kind: CloudNativeKafkaCluster
 metadata:
   name: {{ $name }}
 spec:
