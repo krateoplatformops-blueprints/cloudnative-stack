@@ -1,0 +1,12 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ .Values.cloudnativepg.instance.clusterName }}
+spec:
+  instances: {{ .Values.cloudnativepg.instance.replicas }}
+  storage:
+    size: {{ .Values.cloudnativepg.instance.storageSize }}
+  bootstrap:
+    initdb:
+      database: {{ .Values.cloudnativepg.instance.databaseName }}
+      owner: {{ .Values.cloudnativepg.instance.user }}

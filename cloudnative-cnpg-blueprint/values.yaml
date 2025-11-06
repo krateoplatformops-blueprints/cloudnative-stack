@@ -1,0 +1,41 @@
+    # @schema
+    # description: CloudNativePG (PostgreSQL operator) configuration
+    # type: object
+    # @schema
+    cloudnativepg:
+      # @schema
+      # description: List of CloudNativePG clusters to create
+      # type: object
+      # @schema
+      instance:
+        # @schema
+        # description: Cluster name
+        # type: string
+        # @schema
+        clusterName: "cnpg-the-first"
+        # @schema
+        # description: Number of PostgreSQL instances (pods)
+        # type: integer
+        # minimum: 1
+        # default: 1
+        # @schema
+        replicas: 1
+        # @schema
+        # description: Persistent storage request size per instance
+        # type: string
+        # pattern: '^[0-9]+Gi$'
+        # default: "1Gi"
+        # @schema
+        storageSize: "1Gi"
+        # @schema
+        # description: Default database name to create
+        # type: string
+        # default: appdb
+        # @schema
+        databaseName: "appdb"
+        # @schema
+        # description: Database user to create
+        # type: string
+        # default: appuser
+        # @schema
+        user: "appuser"

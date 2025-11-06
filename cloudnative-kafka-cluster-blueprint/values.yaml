@@ -1,0 +1,12 @@
+
+# @schema
+# description: Apache Kafka configuration (cluster + topics)
+# type: object
+# @schema
+kafka:
+  # @schema
+  # description: Logical name of the Kafka cluster
+  # type: string
+  # default: kafka
+  # @schema
+  clusterName: "kafka"

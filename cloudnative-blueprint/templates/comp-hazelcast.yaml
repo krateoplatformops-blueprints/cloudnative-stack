@@ -1,0 +1,24 @@
+{{- if .Values.backend.enabled }}
+{{ $namespace := .Release.Namespace }}
+{{- range $j, $d := .Values.backend.deployments }}
+{{- if $d.hazelcast.enabled }}
+{{ $repository := $d.hazelcast.repository }}
+{{ $version := $d.hazelcast.version }}
+{{ $licenseKey := $d.hazelcast.licenseKey }}
+{{- range $i, $v := $d.hazelcast.clusters }}
+apiVersion: composition.krateo.io/v0-1-0
+kind: CloudNativeHazelcast
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  hazelcast:
+    licenseKey: {{ $licenseKey }}
+    repository: {{ $repository }}
+    version: {{ $version }}
+    cluster:
+      name: {{ $v.name }}
+      size: {{ $v.size }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

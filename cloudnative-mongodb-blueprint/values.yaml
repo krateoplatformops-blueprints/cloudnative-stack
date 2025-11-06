@@ -1,0 +1,74 @@
+# @schema
+# description: MongoDB (via MongoDB Operator) configuration
+# type: object
+# @schema
+mongodb:
+  # @schema
+  # description: List of MongoDB clusters to create
+  # type: object
+  # @schema
+  instance: 
+    # @schema
+    # description: Cluster name
+    # type: string
+    # @schema
+    clusterName: "mongodb-one"
+    # @schema
+    # description: Number of MongoDB replicas
+    # type: integer
+    # minimum: 1
+    # default: 1
+    # @schema
+    replicas: 1
+    # @schema
+    # description: MongoDB version
+    # type: string
+    # example: "8.0.0"
+    # @schema
+    version: "8.0.0"
+    # @schema
+    # description: Persistent storage request size
+    # type: string
+    # pattern: '^[0-9]+Gi$'
+    # default: "2Gi"
+    # @schema
+    storageSize: "2Gi"
+    # @schema
+    # description: Admin/database username to create
+    # type: string
+    # default: myuser
+    # @schema
+    username: "myuser"
+    # @schema
+    # description: Admin/database password; if empty, a random 16-char password will be generated
+    # type: string
+    # default: ""
+    # sensitive: true
+    # @schema
+    password: ""
+    # @schema
+    # description: MongoDB Ops Manager/ReplicaSet configuration
+    # type: object
+    # required: [replicas, members, version]
+    # @schema
+    opsManager:
+      # @schema
+      # description: Number of Ops Manager pods
+      # type: integer
+      # minimum: 1
+      # default: 1
+      # @schema
+      replicas: 1
+      # @schema
+      # description: Number of replica set members
+      # type: integer
+      # minimum: 1
+      # default: 3
+      # @schema
+      members: 3
+      # @schema
+      # description: Ops Manager version
+      # type: string
+      # example: "8.0.0"
+      # @schema
+      version: "8.0.0"

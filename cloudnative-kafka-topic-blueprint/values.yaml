@@ -1,0 +1,39 @@
+
+# @schema
+# description: Apache Kafka configuration (cluster + topics)
+# type: object
+# @schema
+kafka:
+  # @schema
+  # description: Logical name of the Kafka cluster
+  # type: string
+  # default: kafka
+  # @schema
+  clusterName: "kafka"
+  # @schema
+  # description: Topics to create on the cluster
+  # type: array
+  # items:
+  #   type: object
+  #   required: [topicName, partitions, replicas]
+  # @schema
+  topics:
+  - # @schema
+    # description: Kafka topic name
+    # type: string
+    # @schema
+    topicName: "first-topic"
+    # @schema
+    # description: Number of partitions for the topic
+    # type: integer
+    # minimum: 1
+    # default: 3
+    # @schema
+    partitions: 3
+    # @schema
+    # description: Replication factor for the topic
+    # type: integer
+    # minimum: 1
+    # default: 1
+    # @schema
+    replicas: 1    

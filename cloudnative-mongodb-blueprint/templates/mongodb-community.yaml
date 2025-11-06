@@ -1,0 +1,46 @@
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: {{ .Values.mongodb.instance.clusterName | quote }}
+spec:
+  members: {{ .Values.mongodb.instance.replicas }}
+  type: ReplicaSet
+  version: {{ .Values.mongodb.instance.version | quote }}
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: {{ .Values.mongodb.instance.username | quote }}
+      db: "admin"
+      passwordSecretRef:
+        name: {{ .Values.mongodb.instance.clusterName | quote }}
+      roles:
+        - name: clusterAdmin
+          db: admin
+        - name: userAdminAnyDatabase
+          db: admin
+      scramCredentialsSecretName: {{ .Values.mongodb.instance.clusterName }}-{{ .Values.mongodb.instance.username }}
+  statefulSet:
+    spec:
+      volumeClaimTemplates:
+        - metadata:
+            name: data-volume
+          spec:
+            resources:
+              requests:
+                storage: {{ .Values.mongodb.instance.storageSize | quote }}
+---
+apiVersion: mongodb.com/v1
+kind: MongoDBOpsManager
+metadata:
+  name: {{ .Values.mongodb.instance.clusterName }}-om
+spec:
+  replicas: {{ .Values.mongodb.instance.opsManager.replicas }}
+  version: {{ .Values.mongodb.instance.opsManager.version }}
+  adminCredentials: {{ .Values.mongodb.instance.clusterName }}-{{ .Values.mongodb.instance.username }}
+  externalConnectivity:
+    type: LoadBalancer
+  applicationDatabase:
+    topology: SingleCluster
+    members: {{ .Values.mongodb.instance.opsManager.members }}
+    version: {{ .Values.mongodb.instance.version }}

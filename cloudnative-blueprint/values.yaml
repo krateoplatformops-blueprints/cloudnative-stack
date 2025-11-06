@@ -153,12 +153,6 @@ backend:
       # @schema
       licenseKey: TrialLicense#10Nodes#eyJhbGxvd2VkTmF0aXZlTWVtb3J5U2l6ZSI6MTAwLCJhbGxvd2VkTnVtYmVyT2ZOb2RlcyI6MTAsImFsbG93ZWRUaWVyZWRTdG9yZVNpemUiOjAsImFsbG93ZWRUcGNDb3JlcyI6MCwiY3JlYXRpb25EYXRlIjoxNzYxODQ3ODcwLjYzNjUyOTU1OSwiZXhwaXJ5RGF0ZSI6MTc2NDM3NDM5OS45OTk5OTk5OTksImZlYXR1cmVzIjpbMCwyLDMsNCw1LDYsNyw4LDEwLDExLDEzLDE0LDE1LDE3LDIxLDIyXSwiZ3JhY2VQZXJpb2QiOjAsImhhemVsY2FzdFZlcnNpb24iOjk5LCJvZW0iOmZhbHNlLCJ0cmlhbCI6dHJ1ZSwidmVyc2lvbiI6IlY3In0=.7Wh2kBN9XyTR6J4rwj18vvrMvFk37ckhw21VmVfKJ9-sYAEscbMOj20SDn7tzXkBqsurfXYpb3Ke0dMBrA0qDQ==
       # @schema
-      # description: Secret key name under which the license key is stored
-      # type: string
-      # default: hazelcast-license-key
-      # @schema
-      licenseKeyName: hazelcast-license-key
-      # @schema
       # description: Repository for Hazelcast image
       # type: string
       # default: docker.io/hazelcast/hazelcast

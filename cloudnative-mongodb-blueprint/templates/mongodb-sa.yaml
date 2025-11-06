@@ -1,21 +1,26 @@
-{{- if .Values.backend.enabled  }}
-{{ $namespace := .Release.Namespace }}
-{{- range $j, $d := .Values.backend.deployments }}
-{{- if $d.mongodb.enabled }}
+# Lookups should avoid the chart breaking on 2nd install
+{{- $appdbSA := lookup "v1" "ServiceAccount" .Release.Namespace "mongodb-kubernetes-appdb" -}}
+{{- if not $appdbSA }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: mongodb-kubernetes-appdb # do not change, only this works and I don't know why
 ---
+{{- end }}
+
+{{- $opsSA := lookup "v1" "ServiceAccount" .Release.Namespace "mongodb-kubernetes-ops-manager" -}}
+{{- if not $opsSA }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: mongodb-kubernetes-ops-manager # do not change, only this works and I don't know why
 ---
+{{- end }}
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ $d.mongodb.clusterName }}-operator-role
+  name: {{ .Values.mongodb.clusterName }}-operator-role
 rules:
   - apiGroups: [""]
     resources: ["secrets", "configmaps", "pods", "services"]
@@ -27,18 +32,15 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ $d.mongodb.clusterName }}-operator-role-operator-rolebinding
+  name: {{ .Values.mongodb.clusterName }}-operator-role-operator-rolebinding
 subjects:
   - kind: ServiceAccount
     name: mongodb-kubernetes-appdb
-    namespace: {{ $namespace }}
+    namespace: {{ .Release.Namespace }}
   - kind: ServiceAccount
     name: mongodb-kubernetes-ops-manager
-    namespace: {{ $namespace }}
+    namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
-  name: {{ $d.mongodb.clusterName }}-operator-role
+  name: {{ .Values.mongodb.clusterName }}-operator-role
   apiGroup: rbac.authorization.k8s.io
-{{- end }}
-{{- end }}
-{{- end }}
