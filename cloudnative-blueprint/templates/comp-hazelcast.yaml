@@ -1,5 +1,5 @@
 {{- if .Values.backend.enabled }}
-{{ $namespace := .Release.Namespace }}
+{{ $name := .Release.Name }}
 {{- range $j, $d := .Values.backend.deployments }}
 {{- if $d.hazelcast.enabled }}
 {{ $repository := $d.hazelcast.repository }}
