@@ -4,7 +4,7 @@
 {{- if $d.cloudnativepg.enabled }}
 {{- range $i, $v := $d.cloudnativepg.instances }}
 apiVersion: composition.krateo.io/v0-1-0
-kind: CloudNativeCNPG
+kind: CloudNativeCnpg
 metadata:
   name: {{ $name }}
 spec:
