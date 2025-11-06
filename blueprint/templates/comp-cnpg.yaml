@@ -1,0 +1,22 @@
+{{- if .Values.backend.enabled }}
+{{ $name := .Release.Namespace }}
+{{- range $j, $d := .Values.backend.deployments }}
+{{- if $d.cloudnativepg.enabled }}
+{{- range $i, $v := $d.cloudnativepg.instances }}
+apiVersion: composition.krateo.io/v0-1-0
+kind: CloudNativeCNPG
+metadata:
+  name: {{ $name }}
+spec:
+  cloudnativepg:
+    instance:
+      clusterName: {{ $v.clusterName }}
+      replicas: {{ $v.replicas }}
+      storageSize: {{ $v.storageSize }}
+      databaseName: {{ $v.databaseName }}
+      user: {{ $v.user }}
+---
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
