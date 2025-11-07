@@ -7,17 +7,16 @@
 {{ $licenseKey := $d.hazelcast.licenseKey }}
 {{- range $i, $v := $d.hazelcast.clusters }}
 apiVersion: composition.krateo.io/v0-1-0
-kind: CloudNativeHazelcast
+kind: Hazelcast
 metadata:
-  name: {{ $name }}
+  name: {{ $name }}-{{ $v.name }}
 spec:
-  hazelcast:
-    licenseKey: {{ $licenseKey }}
-    repository: {{ $repository }}
-    version: {{ $version }}
-    cluster:
-      name: {{ $v.name }}
-      size: {{ $v.size }}
+  licenseKey: {{ $licenseKey }}
+  repository: {{ $repository }}
+  version: {{ $version }}
+  cluster:
+    name: {{ $v.name }}
+    size: {{ $v.size }}
 {{- end }}
 {{- end }}
 {{- end }}

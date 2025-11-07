@@ -102,12 +102,6 @@ backend:
       # @schema
       enabled: true
       # @schema
-      # description: Logical name of the Kafka cluster
-      # type: string
-      # default: kafka
-      # @schema
-      clusterName: "kafka"
-      # @schema
       # description: Topics to create on the cluster
       # type: array
       # items:
