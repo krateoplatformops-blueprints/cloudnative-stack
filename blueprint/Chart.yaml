@@ -1,6 +1,6 @@
 apiVersion: v2
 name: cloudnative-stack
-description: A Helm chart for Kubernetes
+description: This Krateo blueprint deploys a complex, multi-tier application stack on Kubernetes. It is designed to be highly configurable and relies on best-practice Kubernetes operators for managing stateful components like databases and message queues.
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -16,3 +16,12 @@ type: application
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
 version: CHART_VERSION
+
+home: https://krateo.io
+icon: "https://github.com/krateoplatformops/krateo/blob/main/docs/media/logo.svg"
+keywords:
+  - portal
+sources:
+  - https://github.com/krateoplatformops-blueprints/cloudnative-stack
+annotations:
+  krateoSupportedVersion: "2.6.0"

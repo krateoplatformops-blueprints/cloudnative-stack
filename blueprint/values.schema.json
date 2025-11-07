@@ -41,19 +41,13 @@
                           "description": "Persistent storage request size per instance",
                           "pattern": "^[0-9]+Gi$",
                           "type": "string"
-                        },
-                        "user": {
-                          "default": "appuser",
-                          "description": "Database user to create",
-                          "type": "string"
                         }
                       },
                       "required": [
                         "clusterName",
                         "replicas",
                         "storageSize",
-                        "databaseName",
-                        "user"
+                        "databaseName"
                       ],
                       "type": "object"
                     },
