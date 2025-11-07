@@ -50,7 +50,7 @@
                       },
                       "required": [
                         "clusterName",
-                        "instances",
+                        "replicas",
                         "storageSize",
                         "databaseName",
                         "user"
@@ -174,11 +174,7 @@
                       "required": [
                         "clusterName",
                         "replicas",
-                        "version",
-                        "storageSize",
-                        "username",
-                        "password",
-                        "opsManager"
+                        "storageSize"
                       ],
                       "type": "object"
                     },
