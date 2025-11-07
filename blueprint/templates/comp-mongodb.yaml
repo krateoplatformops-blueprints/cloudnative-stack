@@ -1,25 +1,23 @@
 {{- if .Values.backend.enabled  }}
-{{ $name := .Release.Namespace }}
+{{ $name := .Release.Name }}
 {{- range $j, $d := .Values.backend.deployments }}
 {{- if $d.mongodb.enabled }}
 {{- range $i, $v := $d.mongodb.instances }}
 apiVersion: composition.krateo.io/v0-1-0
-kind: CloudNativeMongodb
+kind: Mongodb
 metadata:
-  name: {{ $name }}
+  name: {{ $name }}-{{ $v.clusterName }}
 spec:
-  mongodb:
-    instance:
-      clusterName: {{ $v.clusterName }}
-      replicas: {{ $v.replicas }}
-      version: {{ $v.version }}
-      storageSize: {{ $v.storageSize }}
-      username: {{ $v.username }}
-      password: {{ $v.password }}
-      opsManager:
-        replicas: {{ $v.opsManager.replicas }}
-        members: {{ $v.opsManager.members }}
-        version: {{ $v.opsManager.version }}
+  clusterName: {{ $v.clusterName }}
+  replicas: {{ $v.replicas }}
+  version: {{ $v.version }}
+  storageSize: {{ $v.storageSize }}
+  username: {{ $v.username }}
+  password: {{ $v.password }}
+  opsManager:
+    replicas: {{ $v.opsManager.replicas }}
+    members: {{ $v.opsManager.members }}
+    version: {{ $v.opsManager.version }}
 ---
 {{- end }}
 {{- end }}
