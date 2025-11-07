@@ -171,7 +171,7 @@ backend:
   #           description: List of CloudNativePG clusters to create
   #           items:
   #             type: object
-  #             required: [clusterName, replicas, storageSize, databaseName, user]
+  #             required: [clusterName, replicas, storageSize, databaseName]
   #             properties:
   #               clusterName:
   #                 type: string
@@ -189,10 +189,6 @@ backend:
   #               databaseName:
   #                 type: string
   #                 description: Default database name to create
-  #               user:
-  #                 type: string
-  #                 description: Database user to create
-  #                 default: appuser
   # @schema
   deployments:
   - # @schema
@@ -230,5 +226,4 @@ backend:
         replicas: 1
         storageSize: "1Gi"
         databaseName: "appdb"
-        user: "appuser"
         # @schema
