@@ -10,14 +10,7 @@ metadata:
 spec:
   clusterName: {{ $v.clusterName }}
   replicas: {{ $v.replicas }}
-  version: {{ $v.version }}
   storageSize: {{ $v.storageSize }}
-  username: {{ $v.username }}
-  password: {{ $v.password }}
-  opsManager:
-    replicas: {{ $v.opsManager.replicas }}
-    members: {{ $v.opsManager.members }}
-    version: {{ $v.opsManager.version }}
 ---
 {{- end }}
 {{- end }}
