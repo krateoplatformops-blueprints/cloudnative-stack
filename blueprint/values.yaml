@@ -143,7 +143,7 @@ backend:
   #           description: List of MongoDB clusters to create
   #           items:
   #             type: object
-  #             required: [clusterName, replicas, version, storageSize, username, password, opsManager]
+  #             required: [clusterName, replicas, storageSize]
   #             properties:
   #               clusterName:
   #                 type: string
@@ -171,7 +171,7 @@ backend:
   #           description: List of CloudNativePG clusters to create
   #           items:
   #             type: object
-  #             required: [clusterName, instances, storageSize, databaseName, user]
+  #             required: [clusterName, replicas, storageSize, databaseName, user]
   #             properties:
   #               clusterName:
   #                 type: string
