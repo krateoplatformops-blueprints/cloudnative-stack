@@ -2,6 +2,52 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": true,
   "properties": {
+    "frontend": {
+      "additionalProperties": false,
+      "description": "Frontend tier configuration",
+      "properties": {
+        "deployments": {
+          "description": "List of frontend Deployments to create",
+          "items": {
+            "properties": {
+              "name": {
+                "description": "Name of the frontend Deployment",
+                "type": "string"
+              },
+              "image": {
+                "default": "nginx:latest",
+                "description": "Container image for the frontend",
+                "type": "string"
+              },
+              "port": {
+                "default": 90,
+                "description": "Service/container port exposed by the frontend",
+                "maximum": 65535,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "replicas": {
+                "default": 1,
+                "description": "Desired number of replicas for the frontend Deployment",
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "name",
+              "image",
+              "port",
+              "replicas"
+            ],
+            "type": "object"
+          },
+          "title": "deployments",
+          "type": "array"
+        }
+      },
+      "title": "frontend",
+      "type": "object"
+    },
     "backend": {
       "additionalProperties": false,
       "description": "Backend tier configuration (apps and backing services)",
@@ -10,39 +56,56 @@
           "description": "List of backend Deployments to create",
           "items": {
             "properties": {
-              "cloudnativepg": {
-                "description": "CloudNativePG (PostgreSQL operator) configuration",
+              "name": {
+                "description": "Name of the backend Deployment",
+                "type": "string"
+              },
+              "image": {
+                "default": "openeuler/spring-boot:latest",
+                "description": "Container image for the backend",
+                "type": "string"
+              },
+              "port": {
+                "default": 8080,
+                "description": "Service/container port exposed by the backend",
+                "maximum": 65535,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "replicas": {
+                "default": 1,
+                "description": "Desired number of replicas for the backend Deployment",
+                "minimum": 1,
+                "type": "integer"
+              },
+              "kafka": {
+                "description": "Apache Kafka configuration (cluster + topics)",
                 "properties": {
-                  "instances": {
-                    "description": "List of CloudNativePG clusters to create",
+                  "topics": {
+                    "description": "Topics to create on the cluster",
                     "items": {
                       "properties": {
-                        "clusterName": {
-                          "description": "Cluster name",
+                        "topicName": {
+                          "description": "Kafka topic name",
                           "type": "string"
                         },
-                        "databaseName": {
-                          "description": "Default database name to create",
-                          "type": "string"
-                        },
-                        "replicas": {
+                        "partitions": {
                           "default": 1,
-                          "description": "Number of PostgreSQL instances (pods)",
+                          "description": "Number of partitions for the topic",
                           "minimum": 1,
                           "type": "integer"
                         },
-                        "storageSize": {
-                          "default": "1Gi",
-                          "description": "Persistent storage request size per instance",
-                          "pattern": "^[0-9]+Gi$",
-                          "type": "string"
+                        "replicas": {
+                          "default": 1,
+                          "description": "Replication factor for the topic",
+                          "minimum": 1,
+                          "type": "integer"
                         }
                       },
                       "required": [
-                        "clusterName",
-                        "replicas",
-                        "storageSize",
-                        "databaseName"
+                        "topicName",
+                        "partitions",
+                        "replicas"
                       ],
                       "type": "object"
                     },
@@ -72,47 +135,6 @@
                       "required": [
                         "name",
                         "size"
-                      ],
-                      "type": "object"
-                    },
-                    "type": "array"
-                  }
-                },
-                "type": "object"
-              },
-              "image": {
-                "default": "openeuler/spring-boot:latest",
-                "description": "Container image for the backend",
-                "type": "string"
-              },
-              "kafka": {
-                "description": "Apache Kafka configuration (cluster + topics)",
-                "properties": {
-                  "topics": {
-                    "description": "Topics to create on the cluster",
-                    "items": {
-                      "properties": {
-                        "partitions": {
-                          "default": 1,
-                          "description": "Number of partitions for the topic",
-                          "minimum": 1,
-                          "type": "integer"
-                        },
-                        "replicas": {
-                          "default": 1,
-                          "description": "Replication factor for the topic",
-                          "minimum": 1,
-                          "type": "integer"
-                        },
-                        "topicName": {
-                          "description": "Kafka topic name",
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "topicName",
-                        "partitions",
-                        "replicas"
                       ],
                       "type": "object"
                     },
@@ -156,25 +178,49 @@
                   }
                 },
                 "type": "object"
-              },
-              "name": {
-                "description": "Name of the backend Deployment",
-                "type": "string"
-              },
-              "port": {
-                "default": 8080,
-                "description": "Service/container port exposed by the backend",
-                "maximum": 65535,
-                "minimum": 1,
-                "type": "integer"
-              },
-              "replicas": {
-                "default": 1,
-                "description": "Desired number of replicas for the backend Deployment",
-                "minimum": 1,
-                "type": "integer"
               }
             },
+              "cloudnativepg": {
+                "description": "CloudNativePG (PostgreSQL operator) configuration",
+                "properties": {
+                  "instances": {
+                    "description": "List of CloudNativePG clusters to create",
+                    "items": {
+                      "properties": {
+                        "clusterName": {
+                          "description": "Cluster name",
+                          "type": "string"
+                        },
+                        "replicas": {
+                          "default": 1,
+                          "description": "Number of PostgreSQL instances (pods)",
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "storageSize": {
+                          "default": "1Gi",
+                          "description": "Persistent storage request size per instance",
+                          "pattern": "^[0-9]+Gi$",
+                          "type": "string"
+                        },
+                        "databaseName": {
+                          "description": "Default database name to create",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "clusterName",
+                        "replicas",
+                        "storageSize",
+                        "databaseName"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
             "required": [
               "name",
               "image",
@@ -188,52 +234,6 @@
         }
       },
       "title": "backend",
-      "type": "object"
-    },
-    "frontend": {
-      "additionalProperties": false,
-      "description": "Frontend tier configuration",
-      "properties": {
-        "deployments": {
-          "description": "List of frontend Deployments to create",
-          "items": {
-            "properties": {
-              "image": {
-                "default": "nginx:latest",
-                "description": "Container image for the frontend",
-                "type": "string"
-              },
-              "name": {
-                "description": "Name of the frontend Deployment",
-                "type": "string"
-              },
-              "port": {
-                "default": 90,
-                "description": "Service/container port exposed by the frontend",
-                "maximum": 65535,
-                "minimum": 1,
-                "type": "integer"
-              },
-              "replicas": {
-                "default": 1,
-                "description": "Desired number of replicas for the frontend Deployment",
-                "minimum": 1,
-                "type": "integer"
-              }
-            },
-            "required": [
-              "name",
-              "image",
-              "port",
-              "replicas"
-            ],
-            "type": "object"
-          },
-          "title": "deployments",
-          "type": "array"
-        }
-      },
-      "title": "frontend",
       "type": "object"
     }
   },
