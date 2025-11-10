@@ -4,12 +4,6 @@
 # @schema
 frontend:
   # @schema
-  # description: Whether to deploy the frontend tier
-  # type: boolean
-  # default: true
-  # @schema
-  enabled: true
-  # @schema
   # description: List of frontend Deployments to create
   # type: array
   # items:
@@ -49,12 +43,6 @@ frontend:
 # @schema
 backend:
   # @schema
-  # description: Whether to deploy the backend tier
-  # type: boolean
-  # default: true
-  # @schema
-  enabled: true
-  # @schema
   # description: List of backend Deployments to create
   # type: array
   # items:
@@ -83,10 +71,6 @@ backend:
   #       type: object
   #       description: Apache Kafka configuration (cluster + topics)
   #       properties:
-  #         enabled:
-  #           description: Whether to deploy/configure Kafka resources
-  #           default: true
-  #           type: boolean
   #         topics:
   #           type: array
   #           description: Topics to create on the cluster
@@ -111,10 +95,6 @@ backend:
   #       type: object
   #       description: Hazelcast in-memory data grid configuration
   #       properties:
-  #         enabled:
-  #           type: boolean
-  #           description: Whether to deploy/configure Hazelcast resources
-  #           default: true
   #         clusters:
   #           type: array
   #           description: list of Hazelcast clusters to create
@@ -134,10 +114,6 @@ backend:
   #       type: object
   #       description: MongoDB (via MongoDB Operator) configuration
   #       properties:
-  #         enabled:
-  #           type: boolean
-  #           description: Whether to deploy/configure MongoDB Operator resources
-  #           default: true
   #         instances:
   #           type: array
   #           description: List of MongoDB clusters to create
@@ -162,10 +138,6 @@ backend:
   #       type: object
   #       description: CloudNativePG (PostgreSQL operator) configuration
   #       properties:
-  #         enabled:
-  #           description: Whether to deploy/configure CloudNativePG clusters
-  #           default: true
-  #           type: boolean
   #         instances:
   #           type: array
   #           description: List of CloudNativePG clusters to create
@@ -197,7 +169,6 @@ backend:
     port: 8080
     replicas: 1
     kafka:
-      enabled: true
       topics:
       - # @schema
         topicName: "first-topic"
@@ -205,21 +176,18 @@ backend:
         replicas: 1    
         # @schema
     hazelcast:
-      enabled: true
       clusters:
       - # @schema
         name: "hz-first"
         size: 1
         # @schema
     mongodb:
-      enabled: true
       instances: 
       - # @schema
         clusterName: "mongodb-one"
         replicas: 1
         storageSize: "2Gi"
     cloudnativepg:
-      enabled: true
       instances:
       - # @schema
         clusterName: "cnpg-the-first"

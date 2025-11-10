@@ -1,7 +1,5 @@
-{{- if .Values.backend.enabled  }}
 {{ $name := .Release.Name }}
 {{- range $j, $d := .Values.backend.deployments }}
-{{- if $d.mongodb.enabled }}
 {{- range $i, $v := $d.mongodb.instances }}
 apiVersion: composition.krateo.io/v0-1-0
 kind: Mongodb
@@ -12,7 +10,5 @@ spec:
   replicas: {{ $v.replicas }}
   storageSize: {{ $v.storageSize }}
 ---
-{{- end }}
-{{- end }}
 {{- end }}
 {{- end }}
