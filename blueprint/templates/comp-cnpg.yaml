@@ -1,4 +1,3 @@
-{{- if .Values.backend.enabled }}
 {{ $name := .Release.Name }}
 {{- range $j, $d := .Values.backend.deployments }}
 {{- if $d.cloudnativepg.enabled }}
@@ -14,7 +13,6 @@ spec:
   databaseName: {{ $v.databaseName }}
   user: {{ $v.user }}
 ---
-{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

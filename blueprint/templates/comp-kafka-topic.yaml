@@ -1,4 +1,3 @@
-{{- if .Values.backend.enabled  }}
 {{ $name := .Release.Name }}
 {{- range $j, $d := .Values.backend.deployments }}
 {{- if $d.kafka.enabled  }}
@@ -12,6 +11,5 @@ spec:
     topics:
     {{- toYaml $d.kafka.topics | nindent 6 }}
 ---
-{{- end }}
 {{- end }}
 {{- end }}

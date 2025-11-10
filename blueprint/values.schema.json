@@ -13,11 +13,6 @@
               "cloudnativepg": {
                 "description": "CloudNativePG (PostgreSQL operator) configuration",
                 "properties": {
-                  "enabled": {
-                    "default": true,
-                    "description": "Whether to deploy/configure CloudNativePG clusters",
-                    "type": "boolean"
-                  },
                   "instances": {
                     "description": "List of CloudNativePG clusters to create",
                     "items": {
@@ -81,11 +76,6 @@
                       "type": "object"
                     },
                     "type": "array"
-                  },
-                  "enabled": {
-                    "default": true,
-                    "description": "Whether to deploy/configure Hazelcast resources",
-                    "type": "boolean"
                   }
                 },
                 "type": "object"
@@ -98,11 +88,6 @@
               "kafka": {
                 "description": "Apache Kafka configuration (cluster + topics)",
                 "properties": {
-                  "enabled": {
-                    "default": true,
-                    "description": "Whether to deploy/configure Kafka resources",
-                    "type": "boolean"
-                  },
                   "topics": {
                     "description": "Topics to create on the cluster",
                     "items": {
@@ -139,11 +124,6 @@
               "mongodb": {
                 "description": "MongoDB (via MongoDB Operator) configuration",
                 "properties": {
-                  "enabled": {
-                    "default": true,
-                    "description": "Whether to deploy/configure MongoDB Operator resources",
-                    "type": "boolean"
-                  },
                   "instances": {
                     "description": "List of MongoDB clusters to create",
                     "items": {
@@ -205,12 +185,6 @@
           },
           "title": "deployments",
           "type": "array"
-        },
-        "enabled": {
-          "default": true,
-          "description": "Whether to deploy the backend tier",
-          "title": "enabled",
-          "type": "boolean"
         }
       },
       "title": "backend",
@@ -257,12 +231,6 @@
           },
           "title": "deployments",
           "type": "array"
-        },
-        "enabled": {
-          "default": true,
-          "description": "Whether to deploy the frontend tier",
-          "title": "enabled",
-          "type": "boolean"
         }
       },
       "title": "frontend",

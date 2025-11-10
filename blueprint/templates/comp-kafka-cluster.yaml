@@ -1,4 +1,3 @@
-{{- if .Values.backend.enabled  }}
 {{ $name := .Release.Name }}
 {{- range $j, $d := .Values.backend.deployments }}
 {{- if $d.kafka.enabled  }}
@@ -10,6 +9,5 @@ spec:
   kafka:
     clusterName: {{ $name }}
 ---
-{{- end }}
 {{- end }}
 {{- end }}
