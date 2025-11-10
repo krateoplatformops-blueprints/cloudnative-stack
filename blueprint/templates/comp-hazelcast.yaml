@@ -1,6 +1,5 @@
 {{ $name := .Release.Name }}
 {{- range $j, $d := .Values.backend.deployments }}
-{{- if $d.hazelcast.enabled }}
 {{ $repository := $d.hazelcast.repository }}
 {{ $version := $d.hazelcast.version }}
 {{ $licenseKey := $d.hazelcast.licenseKey }}
@@ -16,6 +15,5 @@ spec:
   cluster:
     name: {{ $v.name }}
     size: {{ $v.size }}
-{{- end }}
 {{- end }}
 {{- end }}

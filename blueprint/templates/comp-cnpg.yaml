@@ -1,6 +1,5 @@
 {{ $name := .Release.Name }}
 {{- range $j, $d := .Values.backend.deployments }}
-{{- if $d.cloudnativepg.enabled }}
 {{- range $i, $v := $d.cloudnativepg.instances }}
 apiVersion: composition.krateo.io/v0-1-0
 kind: Cloudnativepg
@@ -13,6 +12,5 @@ spec:
   databaseName: {{ $v.databaseName }}
   user: {{ $v.user }}
 ---
-{{- end }}
 {{- end }}
 {{- end }}

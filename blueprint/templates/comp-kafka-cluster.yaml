@@ -1,6 +1,5 @@
 {{ $name := .Release.Name }}
 {{- range $j, $d := .Values.backend.deployments }}
-{{- if $d.kafka.enabled  }}
 apiVersion: composition.krateo.io/v0-1-0
 kind: KafkaCluster
 metadata:
@@ -9,5 +8,4 @@ spec:
   kafka:
     clusterName: {{ $name }}
 ---
-{{- end }}
 {{- end }}
