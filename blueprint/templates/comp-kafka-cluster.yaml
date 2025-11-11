@@ -2,6 +2,8 @@
 {{- with .Values.backend }}
 {{- with .deployments }}
 {{- range $j, $d := . }}
+{{ with $d.kafka }}
+{{- if gt ( len .topics ) 0 -}}
 apiVersion: composition.krateo.io/v0-1-0
 kind: KafkaCluster
 metadata:
@@ -10,6 +12,8 @@ spec:
   kafka:
     clusterName: {{ $name }}
 ---
+{{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
