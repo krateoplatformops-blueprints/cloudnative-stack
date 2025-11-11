@@ -2,10 +2,11 @@
 {{- with .Values.backend }}
 {{- with .deployments }}
 {{- range $j, $d := . }}
-{{ $repository := $d.hazelcast.repository }}
-{{ $version := $d.hazelcast.version }}
-{{ $licenseKey := $d.hazelcast.licenseKey }}
-{{- with $d.hazelcast.clusters }}
+{{- with $d.hazelcast }}
+{{ $repository := .repository }}
+{{ $version := .version }}
+{{ $licenseKey := .licenseKey }}
+{{- with .clusters }}
 {{- range $i, $v := . }}
 apiVersion: composition.krateo.io/v0-1-0
 kind: Hazelcast
@@ -19,6 +20,7 @@ spec:
     name: {{ $v.name }}
     size: {{ $v.size }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
