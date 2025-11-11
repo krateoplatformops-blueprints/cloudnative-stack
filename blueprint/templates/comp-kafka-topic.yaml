@@ -1,5 +1,7 @@
-{{ $name := .Release.Name }}
-{{- range $j, $d := .Values.backend.deployments }}
+{{- $name := .Release.Name }}
+{{- with .Values.backend }}
+{{- with .deployments }}
+{{- range $j, $d := . }}
 apiVersion: composition.krateo.io/v0-1-0
 kind: KafkaTopic
 metadata:
@@ -10,4 +12,6 @@ spec:
     topics:
     {{- toYaml $d.kafka.topics | nindent 6 }}
 ---
+{{- end }}
+{{- end }}
 {{- end }}

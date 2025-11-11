@@ -1,4 +1,6 @@
-{{- range $i, $v := .Values.backend.deployments }}
+{{- with .Values.backend }}
+{{- with .deployments }}
+{{- range $i, $v := . }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,4 +21,6 @@ spec:
         ports:
         - containerPort: {{ $v.port }}
 ---
-{{- end }}        
+{{- end }}
+{{- end }}
+{{- end }}

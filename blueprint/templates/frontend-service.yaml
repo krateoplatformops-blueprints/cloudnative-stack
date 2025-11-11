@@ -1,4 +1,6 @@
-{{- range $i, $v := .Values.frontend.deployments }}
+{{- with .Values.frontend }}
+{{- with .deployments }}
+{{- range $i, $v := . }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -11,4 +13,6 @@ spec:
       port: {{ $v.port }}
       targetPort: {{ $v.port }}
 ---
+{{- end }}
+{{- end }}
 {{- end }}
