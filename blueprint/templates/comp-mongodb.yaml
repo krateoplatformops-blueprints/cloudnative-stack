@@ -2,7 +2,8 @@
 {{- with .Values.backend }}
 {{- with .deployments }}
 {{- range $j, $d := . }}
-{{- with $d.mongodb.instances }}
+{{- with $d.mongodb }}
+{{- with .instances }}
 {{- range $i, $v := . }}
 apiVersion: composition.krateo.io/v0-1-0
 kind: Mongodb
@@ -13,6 +14,7 @@ spec:
   replicas: {{ $v.replicas }}
   storageSize: {{ $v.storageSize }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

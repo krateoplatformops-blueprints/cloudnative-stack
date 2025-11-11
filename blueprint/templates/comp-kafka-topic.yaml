@@ -9,8 +9,10 @@ metadata:
 spec:
   kafka:
     clusterName: {{ $name }}
+    {{ with $d.kafka }}
     topics:
-    {{- toYaml $d.kafka.topics | nindent 6 }}
+{{- toYaml .topics | nindent 6 }}
+    {{ end }}
 ---
 {{- end }}
 {{- end }}
