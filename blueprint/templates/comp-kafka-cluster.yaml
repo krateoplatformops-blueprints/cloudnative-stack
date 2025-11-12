@@ -1,9 +1,12 @@
 {{ $name := .Release.Name }}
+{{ $namespace := .Release.Namespace }}
 {{- with .Values.backend }}
 {{- with .deployments }}
 {{- range $j, $d := . }}
 {{ with $d.kafka }}
 {{- if gt ( len .topics ) 0 -}}
+{{- $cluster := lookup "kafka.strimzi.io/v1beta2" "KafkaCluster" $namespace $name -}}
+{{- if not $cluster -}}
 apiVersion: composition.krateo.io/v0-1-0
 kind: KafkaCluster
 metadata:
@@ -12,6 +15,7 @@ spec:
   kafka:
     clusterName: {{ $name }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
