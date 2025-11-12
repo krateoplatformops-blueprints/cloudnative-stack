@@ -178,8 +178,7 @@
                   }
                 },
                 "type": "object"
-              }
-            },
+              },
               "cloudnativepg": {
                 "description": "CloudNativePG (PostgreSQL operator) configuration",
                 "properties": {
@@ -220,7 +219,8 @@
                   }
                 },
                 "type": "object"
-              },
+              }
+            },
             "required": [
               "name",
               "image",
