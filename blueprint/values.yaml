@@ -29,13 +29,13 @@ frontend:
   #       minimum: 1
   #       default: 1
   # @schema
-  deployments:
-  - # @schema
-    name: frontend-one
-    image: nginx:latest
-    port: 80
-    replicas: 1
-    # @schema
+  deployments: []
+  # - # @schema
+  #   name: frontend-one
+  #   image: nginx:latest
+  #   port: 80
+  #   replicas: 1
+  #   # @schema
 
 # @schema
 # description: Backend tier configuration (apps and backing services)
@@ -162,36 +162,36 @@ backend:
   #                 type: string
   #                 description: Default database name to create
   # @schema
-  deployments:
-  - # @schema
-    name: backend-one
-    image: openeuler/spring-boot:latest
-    port: 8080
-    replicas: 1
-    kafka:
-      topics:
-      - # @schema
-        topicName: "first-topic"
-        partitions: 1
-        replicas: 1    
-        # @schema
-    hazelcast:
-      clusters:
-      - # @schema
-        name: "hz-first"
-        size: 1
-        # @schema
-    mongodb:
-      instances: 
-      - # @schema
-        clusterName: "mongodb-one"
-        replicas: 1
-        storageSize: "2Gi"
-    cloudnativepg:
-      instances:
-      - # @schema
-        clusterName: "cnpg-the-first"
-        replicas: 1
-        storageSize: "1Gi"
-        databaseName: "appdb"
-        # @schema
+  deployments: []
+  # - # @schema
+  #   name: backend-one
+  #   image: openeuler/spring-boot:latest
+  #   port: 8080
+  #   replicas: 1
+  #   kafka:
+  #     topics:
+  #     - # @schema
+  #       topicName: "first-topic"
+  #       partitions: 1
+  #       replicas: 1    
+  #       # @schema
+  #   hazelcast:
+  #     clusters:
+  #     - # @schema
+  #       name: "hz-first"
+  #       size: 1
+  #       # @schema
+  #   mongodb:
+  #     instances: 
+  #     - # @schema
+  #       clusterName: "mongodb-one"
+  #       replicas: 1
+  #       storageSize: "2Gi"
+  #   cloudnativepg:
+  #     instances:
+  #     - # @schema
+  #       clusterName: "cnpg-the-first"
+  #       replicas: 1
+  #       storageSize: "1Gi"
+  #       databaseName: "appdb"
+  #       # @schema
