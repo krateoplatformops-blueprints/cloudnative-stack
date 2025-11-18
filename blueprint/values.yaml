@@ -4,38 +4,290 @@
 # @schema
 frontend:
   # @schema
-  # description: List of frontend Deployments to create
+  # description: deployments
   # type: array
   # items:
   #   type: object
-  #   required: [name, image, port, replicas]
   #   properties:
-  #     name:
-  #       type: string
-  #       description: Name of the frontend Deployment
-  #     image:
-  #       description: Container image for the frontend
-  #       type: string
-  #       default: nginx:latest
-  #     port:
-  #       type: integer
-  #       default: 90
-  #       minimum: 1
-  #       maximum: 65535
-  #       description: Service/container port exposed by the frontend
-  #     replicas:
-  #       type: integer
-  #       description: Desired number of replicas for the frontend Deployment
-  #       minimum: 1
-  #       default: 1
+  #     argocd:
+  #       type: object
+  #       properties:
+  #         namespace: 
+  #           type: string
+  #           description: Namespace where ArgoCD has been installed
+  #           default: krateo-system
+  #         application:
+  #           type: object
+  #           description: ArgoCD application configuration section
+  #           properties: 
+  #             project: 
+  #               type: string
+  #               description: ArgoCD Application project
+  #               default: default
+  #             source:
+  #               type: object
+  #               description: ArgoCD Application source parameters section
+  #               properties:
+  #                 path: 
+  #                   type: string
+  #                   description: ArgoCD Application source path inside the repository created by the template
+  #                   default: chart/
+  #             destination:
+  #               type: object
+  #               description: ArgoCD Application destination parameters section
+  #               properties:
+  #                 server: 
+  #                   type: string
+  #                   description: ArgoCD Application target cluster
+  #                   format: idn-hostname
+  #                   default: https://kubernetes.default.svc
+  #                 namespace: 
+  #                   type: string
+  #                   description: ArgoCD Application target namespace
+  #                   default: fireworks-app
+  #             syncEnabled: 
+  #               type: boolean
+  #               description: ArgoCD Application synchronization enabled
+  #               default: false
+  #             syncPolicy:
+  #               type: object
+  #               description: ArgoCD Application synchronization policies section
+  #               properties:
+  #                 automated:
+  #                   type: object
+  #                   description: ArgoCD Application automated synchronization policies section
+  #                   properties:
+  #                     prune: 
+  #                       type: boolean
+  #                       default: true
+  #                     selfHeal: 
+  #                       type: boolean
+  #                       default: true
+  #     app:
+  #       type: object
+  #       description: Helm Chart parameters section
+  #       properties:
+  #         service:
+  #           type: object
+  #           description:  Helm Chart service parameters section
+  #           properties:
+  #             type: 
+  #               type: string
+  #               description: Helm Chart service type
+  #               enum:
+  #               - NodePort
+  #               - LoadBalancer
+  #               default: NodePort
+  #             port: 
+  #               description: Helm Chart service port
+  #               type: integer
+  #               minimum: 30000
+  #               maximum: 32767
+  #               default: 31180
+  #     git:
+  #       type: object
+  #       properties:
+  #         unsupportedCapabilities:
+  #           type: boolean
+  #           default: true
+  #           description: UnsupportedCapabilities enable Go-Git transport.UnsupportedCapabilities Azure DevOps requires capabilities multi_ack / multi_ack_detailed, which are not fully implemented in go-git library and by default are included in transport.UnsupportedCapabilities.
+  #         insecure:
+  #           type: boolean
+  #           default: true
+  #           description: Insecure is useful with hand made SSL certs
+  #         fromRepo:
+  #           type: object
+  #           description: Parameters section for Git repository used as template for the application skeleton
+  #           properties:
+  #             scmUrl:
+  #               type: string
+  #               format: idn-hostname
+  #               default: https://github.com
+  #               examples: [https://api.example.org]
+  #               description: Url of the source Git repository
+  #             org:
+  #               type: string
+  #               description: Organization/group/subgroup of the source Git repository
+  #               default: krateoplatformops-blueprints
+  #             name: 
+  #               type: string
+  #               description:  Name for the source Git repository
+  #               default: github-scaffolding
+  #             branch:
+  #               type: string
+  #               description: Branch of Git repository used as template for the application skeleton
+  #               default: main
+  #             path:
+  #               type: string
+  #               default: skeleton/
+  #               description: Path of Git repository used as template for the application skeleton
+  #             credentials:
+  #               type: object
+  #               description: References to the secrets that contain the credentials required to clone the repository (in case of private ones)
+  #               properties:
+  #                 authMethod:
+  #                   type: string
+  #                   enum:
+  #                   - generic
+  #                   - bearer
+  #                   default: generic
+  #                   description: AuthMethod defines the authentication mode.
+  #                 secretRef:
+  #                   type: object
+  #                   description: Reference details about the secret where the credentials are stored
+  #                   properties:
+  #                     namespace:
+  #                       type: string
+  #                       description: Namespace of the secret where the credentials are stored
+  #                       default: krateo-system
+  #                     name:
+  #                       type: string
+  #                       description: Name of the secret where the credentials are stored
+  #                       default: github-repo-creds
+  #                     key:
+  #                       type: string
+  #                       description: Key of the secret to use
+  #                       default: token
+  #         toRepo:
+  #           type: object
+  #           description: Parameters section for Git repository that will be created by Krateo
+  #           properties:
+  #             scmUrl:
+  #               type: string
+  #               format: idn-hostname
+  #               default: https://github.com
+  #               examples: [https://api.example.org]
+  #               description: Url of the source Git repository
+  #             org:
+  #               type: string
+  #               description: Organization/group/subgroup for the target Git repository
+  #               default: krateoplatformops-blueprints
+  #             name: 
+  #               type: string
+  #               description: Name for the target Git repository
+  #               required: true
+  #             branch:
+  #               type: string
+  #               description: Branch for the target Git repository
+  #               default: main
+  #             path:
+  #               type: string
+  #               default: /
+  #               description: Path of the target Git repository
+  #             credentials:
+  #               type: object
+  #               description: References to the secrets that contain the credentials required to commit to the target repository (in case of private ones)
+  #               properties:
+  #                 authMethod:
+  #                   type: string
+  #                   enum:
+  #                   - generic
+  #                   - bearer
+  #                   default: generic
+  #                   description: AuthMethod defines the authentication mode.
+  #                 secretRef:
+  #                   type: object
+  #                   description: Reference details about the secret where the credentials are stored
+  #                   properties:
+  #                     namespace:
+  #                       type: string
+  #                       description: Namespace of the secret where the credentials are stored
+  #                       default: krateo-system
+  #                     name:
+  #                       type: string
+  #                       description: Name of the secret where the credentials are stored
+  #                       default: github-repo-creds
+  #                     key:
+  #                       type: string
+  #                       description: Key of the secret to use
+  #                       default: token
+  #         private:
+  #           description: Whether the repository is private
+  #           type: boolean
+  #           default: false
+  #         initialize:
+  #           description: Whether the repository must be initialized
+  #           type: boolean
+  #           default: true
+  #         deletionPolicy:
+  #           type: string
+  #           description: DeletionPolicy specifies what will happen to the underlying external when this managed resource is deleted.
+  #           enum:
+  #           - Delete
+  #           - Orphan
+  #           default: Delete
+  #         verbose:
+  #           description: Whether to enable verbose logging for Repo controller 
+  #           type: boolean
+  #           default: false
+  #         configurationRef:
+  #           type: object
+  #           description: Configuration reference for the Repo resource
+  #           properties:
+  #             name:
+  #               type: string
+  #               description: Name of the RepoConfiguration resource
+  #               default: repo-config
+  #             namespace: 
+  #               type: string
+  #               description: Namespace of the RepoConfiguration resource
+  #               default: demo-system
   # @schema
-  deployments: []
-  # - # @schema
-  #   name: frontend-one
-  #   image: nginx:latest
-  #   port: 80
-  #   replicas: 1
-  #   # @schema
+  deployments:
+  - argocd:
+      namespace: krateo-system
+      application:
+        project: default
+        source:
+          path: chart/
+        destination:
+          server: https://kubernetes.default.svc
+          namespace: fireworks-app
+        syncEnabled: false
+        syncPolicy:
+          automated:
+            prune: true
+            selfHeal: true
+    app:
+      service:
+        type: NodePort
+        port: 31180
+    git:
+      features:
+      - pdf
+      - network
+      unsupportedCapabilities: true
+      insecure: true
+      fromRepo:
+        scmUrl: https://github.com
+        org: krateoplatformops-blueprints
+        branch: main
+        credentials:
+          authMethod: generic
+          secretRef:
+            namespace: krateo-system
+            name: github-repo-creds
+            key: token
+      toRepo:
+        scmUrl: https://github.com
+        org: krateoplatformops-test
+        name: ""
+        branch: main
+        credentials:
+          authMethod: generic
+          secretRef:
+            namespace: krateo-system
+            name: github-repo-creds
+            key: token
+        private: false
+        initialize: true
+        deletionPolicy: Delete
+        verbose: false
+        configurationRef:
+          name: repo-config
+          namespace: demo-system
+
+
 
 # @schema
 # description: Backend tier configuration (apps and backing services)

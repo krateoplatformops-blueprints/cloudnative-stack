@@ -1,25 +1,88 @@
+{{ $name := .Release.Name }}
 {{- with .Values.frontend }}
 {{- with .deployments }}
 {{- range $i, $v := . }}
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: composition.krateo.io/v2-0-0
+kind: GithubScaffolding
 metadata:
-  name: {{ $v.name }}-frontend
+  name: {{ $name }}
 spec:
-  replicas: {{ $v.replicas }}
-  selector:
-    matchLabels:
-      app: {{ $v.name }}-frontend
-  template:
-    metadata:
-      labels:
-        app: {{ $v.name }}-frontend
-    spec:
-      containers:
-      - name: frontend
-        image: {{ $v.image | quote }}
-        ports:
-        - containerPort: {{ $v.port }}
+  argocd:
+    namespace: {{ $v.argocd.namespace }}
+    application:
+      project: {{ $v.argocd.application.project }}
+      source:
+        path: {{ $v.argocd.application.source.path }}
+      destination:
+        server: {{ $v.argocd.application.destination.server }}
+        namespace: {{ $v.argocd.application.destination.namespace }}
+      syncEnabled: {{ $v.argocd.application.syncEnabled }}
+      syncPolicy:
+        automated:
+          prune: {{ $v.argocd.application.syncPolicy.automated.prune }}
+          selfHeal: {{ $v.argocd.application.syncPolicy.automated.selfHeal }}
+  app:
+    service:
+      type: {{ $v.app.service.type }}
+      port: {{ $v.app.service.port }}
+  git:
+  {{- $render := false }}
+  {{- $sourceRepo := "" }}
+  {{- $sourcePath := "" }}
+  {{- $targetPath := "" }}
+
+  {{- range $j, $d := $v.git.features }}
+
+  {{- if eq $d "pdf" }}
+  {{- $sourceRepo = "pdf-repo" }}
+  {{- $sourcePath = "/pdf" }}
+  {{- $targetPath = "/pdf" }}
+  {{- $render = true }}
+  {{- else if eq $d "network" }}
+  {{- $sourceRepo = "network-repo" }}
+  {{- $sourcePath = "/network" }}
+  {{- $targetPath = "/network" }}
+  {{- $render = true }}
+  {{- else }}
+  {{- $render = false }}
+  {{- end }}
+
+  {{- if $render }}
+  - unsupportedCapabilities: true
+    insecure: true
+    fromRepo:
+      scmUrl: https://github.com
+      org: {{ $v.git.fromRepo.org }}
+      name: {{ $sourceRepo }}
+      branch: {{ $v.git.fromRepo.branch }}
+      path: {{ $sourcePath }}
+      credentials:
+        authMethod: {{ $v.git.fromRepo.credentials.authMethod }}
+        secretRef:
+          namespace: {{ $v.git.fromRepo.credentials.secretRef.namespace }}
+          name: {{ $v.git.fromRepo.credentials.secretRef.name }}
+          key: {{ $v.git.fromRepo.credentials.secretRef.key }}
+    toRepo:
+      scmUrl: https://github.com
+      org: {{ $v.git.toRepo.org }}
+      name: {{ $v.git.toRepo.name }}
+      branch: {{ $v.git.toRepo.branch }}
+      path: {{ $targetPath }}
+      credentials:
+        authMethod: {{ $v.git.toRepo.credentials.authMethod }}
+        secretRef:
+          namespace: {{ $v.git.toRepo.credentials.secretRef.namespace }}
+          name: {{ $v.git.toRepo.credentials.secretRef.name }}
+          key: {{ $v.git.toRepo.credentials.secretRef.key }}
+      private: {{ $v.git.toRepo.private }}
+      initialize: {{ $v.git.toRepo.initialize }}
+      deletionPolicy: {{ $v.git.toRepo.deletionPolicy }}
+      verbose: {{ $v.git.toRepo.verbose }}
+      configurationRef:
+        name: {{ $v.git.toRepo.configurationRef.name }}
+        namespace: {{ $v.git.toRepo.configurationRef.namespace }}
+    {{- end }}
+    {{- end }}
 ---
 {{- end }}
 {{- end }}
