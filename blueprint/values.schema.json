@@ -1,7 +1,58 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "additionalProperties": false,
+  "additionalProperties": true,
   "properties": {
+    "frontend": {
+      "additionalProperties": false,
+      "description": "Frontend tier configuration",
+      "properties": {
+        "deployments": {
+          "description": "List of frontend Deployments to create",
+          "items": {
+            "properties": {
+              "name": {
+                "description": "Name of the frontend Deployment",
+                "type": "string"
+              },
+              "features": {
+                "description": "Container image for the frontend",
+                "items": {
+                  "enum": [
+                    "pdf-reader",
+                    "qr-scanner"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "port": {
+                "default": 90,
+                "description": "Service/container port exposed by the frontend",
+                "maximum": 65535,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "replicas": {
+                "default": 1,
+                "description": "Desired number of replicas for the frontend Deployment",
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "name",
+              "port",
+              "replicas"
+            ],
+            "type": "object"
+          },
+          "title": "deployments",
+          "type": "array"
+        }
+      },
+      "title": "frontend",
+      "type": "object"
+    },
     "backend": {
       "additionalProperties": false,
       "description": "Backend tier configuration (apps and backing services)",
@@ -10,39 +61,62 @@
           "description": "List of backend Deployments to create",
           "items": {
             "properties": {
-              "cloudnativepg": {
-                "description": "CloudNativePG (PostgreSQL operator) configuration",
+              "name": {
+                "description": "Name of the backend Deployment",
+                "type": "string"
+              },
+              "features": {
+                "description": "Container image for the frontend",
+                "items": {
+                  "enum": [
+                    "pdf-reader",
+                    "qr-scanner"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "port": {
+                "default": 8080,
+                "description": "Service/container port exposed by the backend",
+                "maximum": 65535,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "replicas": {
+                "default": 1,
+                "description": "Desired number of replicas for the backend Deployment",
+                "minimum": 1,
+                "type": "integer"
+              },
+              "kafka": {
+                "description": "Apache Kafka configuration (cluster + topics)",
                 "properties": {
-                  "instances": {
-                    "description": "List of CloudNativePG clusters to create",
+                  "topics": {
+                    "description": "Topics to create on the cluster",
                     "items": {
                       "properties": {
-                        "clusterName": {
-                          "description": "Cluster name",
+                        "topicName": {
+                          "description": "Kafka topic name",
                           "type": "string"
                         },
-                        "databaseName": {
-                          "description": "Default database name to create",
-                          "type": "string"
-                        },
-                        "replicas": {
+                        "partitions": {
                           "default": 1,
-                          "description": "Number of PostgreSQL instances (pods)",
+                          "description": "Number of partitions for the topic",
                           "minimum": 1,
                           "type": "integer"
                         },
-                        "storageSize": {
-                          "default": "1Gi",
-                          "description": "Persistent storage request size per instance",
-                          "pattern": "^[0-9]+Gi$",
-                          "type": "string"
+                        "replicas": {
+                          "default": 1,
+                          "description": "Replication factor for the topic",
+                          "minimum": 1,
+                          "type": "integer"
                         }
                       },
                       "required": [
-                        "clusterName",
-                        "replicas",
-                        "storageSize",
-                        "databaseName"
+                        "topicName",
+                        "partitions",
+                        "replicas"
                       ],
                       "type": "object"
                     },
@@ -72,47 +146,6 @@
                       "required": [
                         "name",
                         "size"
-                      ],
-                      "type": "object"
-                    },
-                    "type": "array"
-                  }
-                },
-                "type": "object"
-              },
-              "image": {
-                "default": "openeuler/spring-boot:latest",
-                "description": "Container image for the backend",
-                "type": "string"
-              },
-              "kafka": {
-                "description": "Apache Kafka configuration (cluster + topics)",
-                "properties": {
-                  "topics": {
-                    "description": "Topics to create on the cluster",
-                    "items": {
-                      "properties": {
-                        "partitions": {
-                          "default": 1,
-                          "description": "Number of partitions for the topic",
-                          "minimum": 1,
-                          "type": "integer"
-                        },
-                        "replicas": {
-                          "default": 1,
-                          "description": "Replication factor for the topic",
-                          "minimum": 1,
-                          "type": "integer"
-                        },
-                        "topicName": {
-                          "description": "Kafka topic name",
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "topicName",
-                        "partitions",
-                        "replicas"
                       ],
                       "type": "object"
                     },
@@ -157,27 +190,50 @@
                 },
                 "type": "object"
               },
-              "name": {
-                "description": "Name of the backend Deployment",
-                "type": "string"
-              },
-              "port": {
-                "default": 8080,
-                "description": "Service/container port exposed by the backend",
-                "maximum": 65535,
-                "minimum": 1,
-                "type": "integer"
-              },
-              "replicas": {
-                "default": 1,
-                "description": "Desired number of replicas for the backend Deployment",
-                "minimum": 1,
-                "type": "integer"
+              "cloudnativepg": {
+                "description": "CloudNativePG (PostgreSQL operator) configuration",
+                "properties": {
+                  "instances": {
+                    "description": "List of CloudNativePG clusters to create",
+                    "items": {
+                      "properties": {
+                        "clusterName": {
+                          "description": "Cluster name",
+                          "type": "string"
+                        },
+                        "replicas": {
+                          "default": 1,
+                          "description": "Number of PostgreSQL instances (pods)",
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "storageSize": {
+                          "default": "1Gi",
+                          "description": "Persistent storage request size per instance",
+                          "pattern": "^[0-9]+Gi$",
+                          "type": "string"
+                        },
+                        "databaseName": {
+                          "description": "Default database name to create",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "clusterName",
+                        "replicas",
+                        "storageSize",
+                        "databaseName"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
               }
             },
             "required": [
               "name",
-              "image",
               "port",
               "replicas"
             ],
@@ -188,322 +244,6 @@
         }
       },
       "title": "backend",
-      "type": "object"
-    },
-    "frontend": {
-      "additionalProperties": false,
-      "description": "Frontend tier configuration",
-      "properties": {
-        "deployments": {
-          "description": "deployments",
-          "items": {
-            "properties": {
-              "app": {
-                "description": "Helm Chart parameters section",
-                "properties": {
-                  "service": {
-                    "description": "Helm Chart service parameters section",
-                    "properties": {
-                      "port": {
-                        "default": 31180,
-                        "description": "Helm Chart service port",
-                        "maximum": 32767,
-                        "minimum": 30000,
-                        "type": "integer"
-                      },
-                      "type": {
-                        "default": "NodePort",
-                        "description": "Helm Chart service type",
-                        "enum": [
-                          "NodePort",
-                          "LoadBalancer"
-                        ],
-                        "type": "string"
-                      }
-                    },
-                    "type": "object"
-                  }
-                },
-                "type": "object"
-              },
-              "argocd": {
-                "properties": {
-                  "application": {
-                    "description": "ArgoCD application configuration section",
-                    "properties": {
-                      "destination": {
-                        "description": "ArgoCD Application destination parameters section",
-                        "properties": {
-                          "namespace": {
-                            "default": "fireworks-app",
-                            "description": "ArgoCD Application target namespace",
-                            "type": "string"
-                          },
-                          "server": {
-                            "default": "https://kubernetes.default.svc",
-                            "description": "ArgoCD Application target cluster",
-                            "format": "idn-hostname",
-                            "type": "string"
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "project": {
-                        "default": "default",
-                        "description": "ArgoCD Application project",
-                        "type": "string"
-                      },
-                      "source": {
-                        "description": "ArgoCD Application source parameters section",
-                        "properties": {
-                          "path": {
-                            "default": "chart/",
-                            "description": "ArgoCD Application source path inside the repository created by the template",
-                            "type": "string"
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "syncEnabled": {
-                        "default": false,
-                        "description": "ArgoCD Application synchronization enabled",
-                        "type": "boolean"
-                      },
-                      "syncPolicy": {
-                        "description": "ArgoCD Application synchronization policies section",
-                        "properties": {
-                          "automated": {
-                            "description": "ArgoCD Application automated synchronization policies section",
-                            "properties": {
-                              "prune": {
-                                "default": true,
-                                "type": "boolean"
-                              },
-                              "selfHeal": {
-                                "default": true,
-                                "type": "boolean"
-                              }
-                            },
-                            "type": "object"
-                          }
-                        },
-                        "type": "object"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "namespace": {
-                    "default": "krateo-system",
-                    "description": "Namespace where ArgoCD has been installed",
-                    "type": "string"
-                  }
-                },
-                "type": "object"
-              },
-              "git": {
-                "properties": {
-                  "configurationRef": {
-                    "description": "Configuration reference for the Repo resource",
-                    "properties": {
-                      "name": {
-                        "default": "repo-config",
-                        "description": "Name of the RepoConfiguration resource",
-                        "type": "string"
-                      },
-                      "namespace": {
-                        "default": "demo-system",
-                        "description": "Namespace of the RepoConfiguration resource",
-                        "type": "string"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "deletionPolicy": {
-                    "default": "Delete",
-                    "description": "DeletionPolicy specifies what will happen to the underlying external when this managed resource is deleted.",
-                    "enum": [
-                      "Delete",
-                      "Orphan"
-                    ],
-                    "type": "string"
-                  },
-                  "fromRepo": {
-                    "description": "Parameters section for Git repository used as template for the application skeleton",
-                    "properties": {
-                      "branch": {
-                        "default": "main",
-                        "description": "Branch of Git repository used as template for the application skeleton",
-                        "type": "string"
-                      },
-                      "credentials": {
-                        "description": "References to the secrets that contain the credentials required to clone the repository (in case of private ones)",
-                        "properties": {
-                          "authMethod": {
-                            "default": "generic",
-                            "description": "AuthMethod defines the authentication mode.",
-                            "enum": [
-                              "generic",
-                              "bearer"
-                            ],
-                            "type": "string"
-                          },
-                          "secretRef": {
-                            "description": "Reference details about the secret where the credentials are stored",
-                            "properties": {
-                              "key": {
-                                "default": "token",
-                                "description": "Key of the secret to use",
-                                "type": "string"
-                              },
-                              "name": {
-                                "default": "github-repo-creds",
-                                "description": "Name of the secret where the credentials are stored",
-                                "type": "string"
-                              },
-                              "namespace": {
-                                "default": "krateo-system",
-                                "description": "Namespace of the secret where the credentials are stored",
-                                "type": "string"
-                              }
-                            },
-                            "type": "object"
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "name": {
-                        "default": "github-scaffolding",
-                        "description": "Name for the source Git repository",
-                        "type": "string"
-                      },
-                      "org": {
-                        "default": "krateoplatformops-blueprints",
-                        "description": "Organization/group/subgroup of the source Git repository",
-                        "type": "string"
-                      },
-                      "path": {
-                        "default": "skeleton/",
-                        "description": "Path of Git repository used as template for the application skeleton",
-                        "type": "string"
-                      },
-                      "scmUrl": {
-                        "default": "https://github.com",
-                        "description": "Url of the source Git repository",
-                        "examples": [
-                          "https://api.example.org"
-                        ],
-                        "format": "idn-hostname",
-                        "type": "string"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "initialize": {
-                    "default": true,
-                    "description": "Whether the repository must be initialized",
-                    "type": "boolean"
-                  },
-                  "insecure": {
-                    "default": true,
-                    "description": "Insecure is useful with hand made SSL certs",
-                    "type": "boolean"
-                  },
-                  "private": {
-                    "default": false,
-                    "description": "Whether the repository is private",
-                    "type": "boolean"
-                  },
-                  "toRepo": {
-                    "description": "Parameters section for Git repository that will be created by Krateo",
-                    "properties": {
-                      "branch": {
-                        "default": "main",
-                        "description": "Branch for the target Git repository",
-                        "type": "string"
-                      },
-                      "credentials": {
-                        "description": "References to the secrets that contain the credentials required to commit to the target repository (in case of private ones)",
-                        "properties": {
-                          "authMethod": {
-                            "default": "generic",
-                            "description": "AuthMethod defines the authentication mode.",
-                            "enum": [
-                              "generic",
-                              "bearer"
-                            ],
-                            "type": "string"
-                          },
-                          "secretRef": {
-                            "description": "Reference details about the secret where the credentials are stored",
-                            "properties": {
-                              "key": {
-                                "default": "token",
-                                "description": "Key of the secret to use",
-                                "type": "string"
-                              },
-                              "name": {
-                                "default": "github-repo-creds",
-                                "description": "Name of the secret where the credentials are stored",
-                                "type": "string"
-                              },
-                              "namespace": {
-                                "default": "krateo-system",
-                                "description": "Namespace of the secret where the credentials are stored",
-                                "type": "string"
-                              }
-                            },
-                            "type": "object"
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "name": {
-                        "description": "Name for the target Git repository",
-                        "type": "string"
-                      },
-                      "org": {
-                        "default": "krateoplatformops-blueprints",
-                        "description": "Organization/group/subgroup for the target Git repository",
-                        "type": "string"
-                      },
-                      "path": {
-                        "default": "/",
-                        "description": "Path of the target Git repository",
-                        "type": "string"
-                      },
-                      "scmUrl": {
-                        "default": "https://github.com",
-                        "description": "Url of the source Git repository",
-                        "examples": [
-                          "https://api.example.org"
-                        ],
-                        "format": "idn-hostname",
-                        "type": "string"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "unsupportedCapabilities": {
-                    "default": true,
-                    "description": "UnsupportedCapabilities enable Go-Git transport.UnsupportedCapabilities Azure DevOps requires capabilities multi_ack / multi_ack_detailed, which are not fully implemented in go-git library and by default are included in transport.UnsupportedCapabilities.",
-                    "type": "boolean"
-                  },
-                  "verbose": {
-                    "default": false,
-                    "description": "Whether to enable verbose logging for Repo controller",
-                    "type": "boolean"
-                  }
-                },
-                "type": "object"
-              }
-            },
-            "type": "object"
-          },
-          "title": "deployments",
-          "type": "array"
-        }
-      },
-      "title": "frontend",
       "type": "object"
     }
   },

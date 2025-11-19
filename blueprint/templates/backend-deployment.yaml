@@ -1,25 +1,59 @@
+{{ $name := .Release.Name }}
+{{ $namespace := .Release.Namespace }}
 {{- with .Values.backend }}
 {{- with .deployments }}
 {{- range $i, $v := . }}
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: composition.krateo.io/v2-0-0
+kind: GithubScaffolding
 metadata:
-  name: {{ $v.name }}-backend
+  name: {{ $name }}
 spec:
-  replicas: {{ $v.replicas }}
-  selector:
-    matchLabels:
-      app: {{ $v.name }}-backend
-  template:
-    metadata:
-      labels:
-        app: {{ $v.name }}-backend
-    spec:
-      containers:
-      - name: backend
-        image: {{ $v.image | quote }}
-        ports:
-        - containerPort: {{ $v.port }}
+  argocd:
+    namespace: {{ $namespace }}
+    application:
+      destination:
+        namespace: {{ $namespace }}
+  app:
+    service:
+      type: LoadBalancer
+      port: {{ $v.port }}
+  git:
+  - unsupportedCapabilities: true
+    insecure: true
+    fromRepo:
+      scmUrl: https://github.com
+      org: krateoplatformops-blueprints
+      name: github-scaffolding
+      branch: main
+      path: /skeleton-backend
+    toRepo:
+      scmUrl: https://github.com
+      org: krateoplatformops-test
+      name: {{ $name }}
+      branch: main
+      path: /
+      configurationRef:
+        name: {{ $name }}
+        namespace: {{ $namespace }}
+  {{- range $j, $d := $v.features }}
+  - unsupportedCapabilities: true
+    insecure: true
+    fromRepo:
+      scmUrl: https://github.com
+      org: krateoplatformops-test
+      name: {{ $d + "-feature" }}
+      branch: main
+      path: /
+    toRepo:
+      scmUrl: https://github.com
+      org: krateoplatformops-test
+      name: {{ $name }}
+      branch: main
+      path: /features
+      configurationRef:
+        name: {{ $name }}
+        namespace: {{ $namespace }}
+    {{- end }}
 ---
 {{- end }}
 {{- end }}

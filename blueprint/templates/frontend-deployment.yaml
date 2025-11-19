@@ -1,4 +1,5 @@
 {{ $name := .Release.Name }}
+{{ $namespace := .Release.Namespace }}
 {{- with .Values.frontend }}
 {{- with .deployments }}
 {{- range $i, $v := . }}
@@ -8,80 +9,50 @@ metadata:
   name: {{ $name }}
 spec:
   argocd:
-    namespace: {{ $v.argocd.namespace }}
+    namespace: {{ $namespace }}
     application:
-      project: {{ $v.argocd.application.project }}
-      source:
-        path: {{ $v.argocd.application.source.path }}
       destination:
-        server: {{ $v.argocd.application.destination.server }}
-        namespace: {{ $v.argocd.application.destination.namespace }}
-      syncEnabled: {{ $v.argocd.application.syncEnabled }}
-      syncPolicy:
-        automated:
-          prune: {{ $v.argocd.application.syncPolicy.automated.prune }}
-          selfHeal: {{ $v.argocd.application.syncPolicy.automated.selfHeal }}
+        namespace: {{ $namespace }}
   app:
     service:
-      type: {{ $v.app.service.type }}
-      port: {{ $v.app.service.port }}
+      type: LoadBalancer
+      port: {{ $v.port }}
   git:
-  {{- $render := false }}
-  {{- $sourceRepo := "" }}
-  {{- $sourcePath := "" }}
-  {{- $targetPath := "" }}
-
-  {{- range $j, $d := $v.git.features }}
-
-  {{- if eq $d "pdf" }}
-  {{- $sourceRepo = "pdf-repo" }}
-  {{- $sourcePath = "/pdf" }}
-  {{- $targetPath = "/pdf" }}
-  {{- $render = true }}
-  {{- else if eq $d "network" }}
-  {{- $sourceRepo = "network-repo" }}
-  {{- $sourcePath = "/network" }}
-  {{- $targetPath = "/network" }}
-  {{- $render = true }}
-  {{- else }}
-  {{- $render = false }}
-  {{- end }}
-
-  {{- if $render }}
   - unsupportedCapabilities: true
     insecure: true
     fromRepo:
       scmUrl: https://github.com
-      org: {{ $v.git.fromRepo.org }}
-      name: {{ $sourceRepo }}
-      branch: {{ $v.git.fromRepo.branch }}
-      path: {{ $sourcePath }}
-      credentials:
-        authMethod: {{ $v.git.fromRepo.credentials.authMethod }}
-        secretRef:
-          namespace: {{ $v.git.fromRepo.credentials.secretRef.namespace }}
-          name: {{ $v.git.fromRepo.credentials.secretRef.name }}
-          key: {{ $v.git.fromRepo.credentials.secretRef.key }}
+      org: krateoplatformops-blueprints
+      name: github-scaffolding
+      branch: main
+      path: /skeleton-frontend
     toRepo:
       scmUrl: https://github.com
-      org: {{ $v.git.toRepo.org }}
-      name: {{ $v.git.toRepo.name }}
-      branch: {{ $v.git.toRepo.branch }}
-      path: {{ $targetPath }}
-      credentials:
-        authMethod: {{ $v.git.toRepo.credentials.authMethod }}
-        secretRef:
-          namespace: {{ $v.git.toRepo.credentials.secretRef.namespace }}
-          name: {{ $v.git.toRepo.credentials.secretRef.name }}
-          key: {{ $v.git.toRepo.credentials.secretRef.key }}
-      private: {{ $v.git.toRepo.private }}
-      initialize: {{ $v.git.toRepo.initialize }}
-      deletionPolicy: {{ $v.git.toRepo.deletionPolicy }}
-      verbose: {{ $v.git.toRepo.verbose }}
+      org: krateoplatformops-test
+      name: {{ $name }}
+      branch: main
+      path: /
       configurationRef:
-        name: {{ $v.git.toRepo.configurationRef.name }}
-        namespace: {{ $v.git.toRepo.configurationRef.namespace }}
-    {{- end }}
+        name: {{ $name }}
+        namespace: {{ $namespace }}
+  {{- range $j, $d := $v.features }}
+  - unsupportedCapabilities: true
+    insecure: true
+    fromRepo:
+      scmUrl: https://github.com
+      org: krateoplatformops-test
+      name: {{ $d + "-feature" }}
+      branch: main
+      path: /
+    toRepo:
+      scmUrl: https://github.com
+      org: krateoplatformops-test
+      name: {{ $name }}
+      branch: main
+      path: /features
+      configurationRef:
+        name: {{ $name }}
+        namespace: {{ $namespace }}
     {{- end }}
 ---
 {{- end }}
