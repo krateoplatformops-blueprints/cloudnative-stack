@@ -41,7 +41,7 @@ spec:
     fromRepo:
       scmUrl: https://github.com
       org: krateoplatformops-test
-      name: {{ $d + "-feature" }}
+      name: {{ $d }}-feature
       branch: main
       path: /
     toRepo:
