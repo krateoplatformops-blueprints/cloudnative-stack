@@ -3,7 +3,7 @@
 {{- with .Values.frontend }}
 {{- with .deployments }}
 {{- range $i, $v := . }}
-apiVersion: composition.krateo.io/v2-0-0
+apiVersion: composition.krateo.io/v2-0-1
 kind: GithubScaffolding
 metadata:
   name: {{ $name }}
