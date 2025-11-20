@@ -18,9 +18,6 @@ frontend:
   #       type: array
   #       items:
   #         type: string
-  #         enum:
-  #         - pdf-reader
-  #         - qr-scanner 
   #     port:
   #       type: integer
   #       default: 90
@@ -64,9 +61,6 @@ backend:
   #       type: array
   #       items:
   #         type: string
-  #         enum:
-  #         - pdf-reader
-  #         - qr-scanner 
   #     port:
   #       type: integer
   #       description: Service/container port exposed by the backend

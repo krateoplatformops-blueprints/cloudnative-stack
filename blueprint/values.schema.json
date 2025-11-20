@@ -17,10 +17,6 @@
               "features": {
                 "description": "Container image for the frontend",
                 "items": {
-                  "enum": [
-                    "pdf-reader",
-                    "qr-scanner"
-                  ],
                   "type": "string"
                 },
                 "type": "array"
@@ -68,10 +64,6 @@
               "features": {
                 "description": "Container image for the frontend",
                 "items": {
-                  "enum": [
-                    "pdf-reader",
-                    "qr-scanner"
-                  ],
                   "type": "string"
                 },
                 "type": "array"
