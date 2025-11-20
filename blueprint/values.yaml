@@ -13,10 +13,11 @@ frontend:
   #     name:
   #       type: string
   #       description: Name of the frontend Deployment
-  #     image:
+  #     features:
   #       description: Container image for the frontend
-  #       type: string
-  #       default: nginx:latest
+  #       type: array
+  #       items:
+  #         type: string
   #     port:
   #       type: integer
   #       default: 90
@@ -32,10 +33,13 @@ frontend:
   deployments: []
   # - # @schema
   #   name: frontend-one
-  #   image: nginx:latest
+  #   features:
+  #   - pdf-reader
   #   port: 80
   #   replicas: 1
   #   # @schema
+
+
 
 # @schema
 # description: Backend tier configuration (apps and backing services)
@@ -52,10 +56,11 @@ backend:
   #     name:
   #       type: string
   #       description: Name of the backend Deployment
-  #     image:
-  #       type: string
+  #     features:
   #       description: Container image for the backend
-  #       default: openeuler/spring-boot:latest
+  #       type: array
+  #       items:
+  #         type: string
   #     port:
   #       type: integer
   #       description: Service/container port exposed by the backend
@@ -165,7 +170,8 @@ backend:
   deployments: []
   # - # @schema
   #   name: backend-one
-  #   image: openeuler/spring-boot:latest
+  #   features:
+  #   - pdf-reader
   #   port: 8080
   #   replicas: 1
   #   kafka:

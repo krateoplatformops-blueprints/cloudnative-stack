@@ -14,10 +14,12 @@
                 "description": "Name of the frontend Deployment",
                 "type": "string"
               },
-              "image": {
-                "default": "nginx:latest",
+              "features": {
                 "description": "Container image for the frontend",
-                "type": "string"
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
               },
               "port": {
                 "default": 90,
@@ -35,7 +37,6 @@
             },
             "required": [
               "name",
-              "image",
               "port",
               "replicas"
             ],
@@ -60,10 +61,12 @@
                 "description": "Name of the backend Deployment",
                 "type": "string"
               },
-              "image": {
-                "default": "openeuler/spring-boot:latest",
-                "description": "Container image for the backend",
-                "type": "string"
+              "features": {
+                "description": "Container image for the frontend",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
               },
               "port": {
                 "default": 8080,
@@ -223,7 +226,6 @@
             },
             "required": [
               "name",
-              "image",
               "port",
               "replicas"
             ],
