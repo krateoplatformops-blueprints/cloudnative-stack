@@ -50,7 +50,7 @@ spec:
       org: krateoplatformops-test
       name: {{ $name }}
       branch: main
-      path: /features
+      path: /app/features
       configurationRef:
         name: {{ $name }}
         namespace: {{ $namespace }}
