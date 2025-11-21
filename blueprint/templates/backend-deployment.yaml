@@ -11,6 +11,7 @@ spec:
   argocd:
     namespace: {{ $namespace }}
     application:
+      syncEnabled: true
       destination:
         namespace: {{ $namespace }}
   app:
