@@ -27,12 +27,24 @@ spec:
       name: github-scaffolding
       branch: main
       path: /skeleton-frontend
+      credentials:
+        authMethod: generic
+        secretRef:
+          namespace: {{ $namespace }}
+          name: github-repo-creds
+          key: token
     toRepo:
       scmUrl: https://github.com
       org: krateoplatformops-test
       name: {{ $name }}
       branch: main
       path: /
+      credentials:
+        authMethod: generic
+        secretRef:
+          namespace: {{ $namespace }}
+          name: github-repo-creds
+          key: token
       configurationRef:
         name: {{ $name }}
         namespace: {{ $namespace }}
@@ -45,12 +57,24 @@ spec:
       name: {{ $d }}-feature
       branch: main
       path: /
+      credentials:
+        authMethod: generic
+        secretRef:
+          namespace: {{ $namespace }}
+          name: github-repo-creds
+          key: token
     toRepo:
       scmUrl: https://github.com
       org: krateoplatformops-test
       name: {{ $name }}
       branch: main
       path: /app/features
+      credentials:
+        authMethod: generic
+        secretRef:
+          namespace: {{ $namespace }}
+          name: github-repo-creds
+          key: token
       configurationRef:
         name: {{ $name }}
         namespace: {{ $namespace }}
