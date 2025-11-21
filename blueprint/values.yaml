@@ -18,6 +18,10 @@ frontend:
   #       type: array
   #       items:
   #         type: string
+  #     syncEnabled:
+  #       description: Enable Argocd sync for frontend deployment
+  #       type: boolean
+  #       default: false
   #     port:
   #       type: integer
   #       default: 90
@@ -31,13 +35,12 @@ frontend:
   #       default: 1
   # @schema
   deployments: []
-  # - # @schema
-  #   name: frontend-one
+  # - name: frontend-one
+  #   syncEnabled: false
   #   features:
   #   - pdf-reader
   #   port: 80
   #   replicas: 1
-  #   # @schema
 
 
 
@@ -61,6 +64,10 @@ backend:
   #       type: array
   #       items:
   #         type: string
+  #     syncEnabled:
+  #       description: Enable Argocd sync for backend deployment
+  #       type: boolean
+  #       default: false
   #     port:
   #       type: integer
   #       description: Service/container port exposed by the backend
@@ -172,6 +179,7 @@ backend:
   #   name: backend-one
   #   features:
   #   - pdf-reader
+  #   syncEnabled: false
   #   port: 8080
   #   replicas: 1
   #   kafka:
