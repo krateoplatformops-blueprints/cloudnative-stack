@@ -33,6 +33,11 @@
                 "description": "Desired number of replicas for the frontend Deployment",
                 "minimum": 1,
                 "type": "integer"
+              },
+              "syncEnabled": {
+                "description": "Enable Argocd sync for frontend deployment",
+                "type": "boolean",
+                "default": false
               }
             },
             "required": [
@@ -80,6 +85,11 @@
                 "description": "Desired number of replicas for the backend Deployment",
                 "minimum": 1,
                 "type": "integer"
+              },
+              "syncEnabled": {
+                "description": "Enable Argocd sync for backend deployment",
+                "type": "boolean",
+                "default": false
               },
               "kafka": {
                 "description": "Apache Kafka configuration (cluster + topics)",
