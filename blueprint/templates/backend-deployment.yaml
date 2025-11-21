@@ -1,13 +1,12 @@
 {{ $name := .Release.Name }}
 {{ $namespace := .Release.Namespace }}
-{{ $repoName := printf "%s-%s" .Release.Name "backend" }}
 {{- with .Values.backend }}
 {{- with .deployments }}
 {{- range $i, $v := . }}
 apiVersion: composition.krateo.io/v2-0-2
 kind: GithubScaffolding
 metadata:
-  name: {{ $name }}-backend-app
+  name: {{ $v.name }}
 spec:
   argocd:
     namespace: {{ $namespace }}
@@ -37,7 +36,7 @@ spec:
     toRepo:
       scmUrl: https://github.com
       org: krateoplatformops-test
-      name: {{ $repoName }}
+      name: {{ $v.name }}
       branch: main
       path: /
       credentials:
@@ -67,7 +66,7 @@ spec:
     toRepo:
       scmUrl: https://github.com
       org: krateoplatformops-test
-      name: {{ $repoName }}
+      name: {{ $v.name }}
       branch: main
       path: /app/features
       credentials:
