@@ -46,7 +46,7 @@ spec:
           name: github-repo-creds
           key: token
       configurationRef:
-        name: {{ $name }}
+        name: repo-config
         namespace: {{ $namespace }}
   {{- range $j, $d := $v.features }}
   - unsupportedCapabilities: true
@@ -76,7 +76,7 @@ spec:
           name: github-repo-creds
           key: token
       configurationRef:
-        name: {{ $name }}
+        name: repo-config
         namespace: {{ $namespace }}
     {{- end }}
 ---
