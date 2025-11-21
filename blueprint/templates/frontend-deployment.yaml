@@ -1,5 +1,6 @@
 {{ $name := .Release.Name }}
 {{ $namespace := .Release.Namespace }}
+{{ $repoName := printf "%s-%s" .Release.Name "frontend" }}
 {{- with .Values.frontend }}
 {{- with .deployments }}
 {{- range $i, $v := . }}
@@ -36,7 +37,7 @@ spec:
     toRepo:
       scmUrl: https://github.com
       org: krateoplatformops-test
-      name: {{ $name }}
+      name: {{ $repoName }}
       branch: main
       path: /
       credentials:
@@ -66,7 +67,7 @@ spec:
     toRepo:
       scmUrl: https://github.com
       org: krateoplatformops-test
-      name: {{ $name }}
+      name: {{ $repoName }}
       branch: main
       path: /app/features
       credentials:
