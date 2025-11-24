@@ -1,5 +1,4 @@
 {{- $name := .Release.Name }}
-{{ $chartName := .Chart.Name }}
 {{- $gracefullyPaused := default false (and .Values.global .Values.global.gracefullyPaused) }}
 {{- with .Values.backend }}
 {{- with .deployments }}
@@ -9,7 +8,7 @@
 apiVersion: composition.krateo.io/v0-1-0
 kind: KafkaTopic
 metadata:
-  name: {{ $name }}-{{ $d.name }}-{{ $chartName }}
+  name: {{ $name }}-{{ $d.name }}-kftcomp
   annotations:
     krateo.io/paused: "{{ $gracefullyPaused }}"
 spec:

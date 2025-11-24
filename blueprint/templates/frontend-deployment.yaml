@@ -8,7 +8,7 @@
 apiVersion: composition.krateo.io/v2-0-2
 kind: GithubScaffolding
 metadata:
-  name: {{ $v.name }}-{{ $chartName }}
+  name: {{ $v.name }}-frontend-gscomp
   annotations:
     krateo.io/paused: "{{ $gracefullyPaused }}"
 spec:
