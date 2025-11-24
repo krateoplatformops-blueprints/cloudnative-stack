@@ -1,12 +1,16 @@
 {{ $name := .Release.Name }}
 {{ $namespace := .Release.Namespace }}
+{{ $chartName := .Chart.Name }}
+{{- $gracefullyPaused := default false (and .Values.global .Values.global.gracefullyPaused) }}
 {{- with .Values.frontend }}
 {{- with .deployments }}
 {{- range $i, $v := . }}
 apiVersion: composition.krateo.io/v2-0-2
 kind: GithubScaffolding
 metadata:
-  name: {{ $v.name }}
+  name: {{ $v.name }}-{{ $chartName }}
+  annotations:
+    krateo.io/paused: "{{ $gracefullyPaused }}"
 spec:
   argocd:
     namespace: {{ $namespace }}

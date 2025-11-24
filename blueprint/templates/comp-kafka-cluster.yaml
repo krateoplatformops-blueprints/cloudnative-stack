@@ -1,5 +1,7 @@
 {{ $name := .Release.Name }}
 {{ $namespace := .Release.Namespace }}
+{{ $chartName := .Chart.Name }}
+{{- $gracefullyPaused := default false (and .Values.global .Values.global.gracefullyPaused) }}
 {{- with .Values.backend }}
 {{- with .deployments }}
 {{- range $j, $d := . }}
@@ -10,7 +12,9 @@
 apiVersion: composition.krateo.io/v0-1-0
 kind: KafkaCluster
 metadata:
-  name: {{ $name }}-{{ $d.name }}
+  name: {{ $name }}-{{ $d.name }}-{{ $chartName }}
+  annotations:
+    krateo.io/paused: "{{ $gracefullyPaused }}"
 spec:
   kafka:
     clusterName: {{ $name }}
