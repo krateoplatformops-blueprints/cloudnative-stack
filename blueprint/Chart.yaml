@@ -18,8 +18,8 @@ type: application
 version: CHART_VERSION
 
 dependencies:
-- name: portal-composition-page-generic
-  version: "1.2.0"
+- name: portal-composition-page-cloudnative-stack
+  version: "1.0.0"
   repository: "https://marketplace.krateo.io"
 
 home: https://krateo.io
