@@ -1,5 +1,6 @@
 {{ $name := .Release.Name }}
 {{ $namespace := .Release.Namespace }}
+{{ $chartName := .Chart.Name }}
 {{- $gracefullyPaused := default false (and .Values.global .Values.global.gracefullyPaused) }}
 {{- with .Values.backend }}
 {{- with .deployments }}

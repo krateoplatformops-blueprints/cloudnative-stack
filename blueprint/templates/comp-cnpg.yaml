@@ -1,4 +1,5 @@
 {{ $name := .Release.Name }}
+{{ $chartName := .Chart.Name }}
 {{- $gracefullyPaused := default false (and .Values.global .Values.global.gracefullyPaused) }}
 {{- with .Values.backend }}
 {{- with .deployments }}
