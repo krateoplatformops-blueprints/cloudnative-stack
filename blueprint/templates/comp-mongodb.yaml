@@ -1,4 +1,5 @@
 {{ $name := .Release.Name }}
+{{- $gracefullyPaused := default false (and .Values.global .Values.global.gracefullyPaused) }}
 {{- with .Values.backend }}
 {{- with .deployments }}
 {{- range $j, $d := . }}
@@ -8,7 +9,9 @@
 apiVersion: composition.krateo.io/v0-1-0
 kind: Mongodb
 metadata:
-  name: {{ $name }}-{{ $v.clusterName }}
+  name: {{ $name }}-{{ $v.clusterName }}-{{ $chartName }}
+  annotations:
+    krateo.io/paused: "{{ $gracefullyPaused }}"
 spec:
   clusterName: {{ $v.clusterName }}
   replicas: {{ $v.replicas }}
