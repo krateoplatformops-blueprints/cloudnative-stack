@@ -1,5 +1,4 @@
 {{ $name := .Release.Name }}
-{{ $chartName := .Chart.Name }}
 {{- $gracefullyPaused := default false (and .Values.global .Values.global.gracefullyPaused) }}
 {{- with .Values.backend }}
 {{- with .deployments }}
@@ -13,7 +12,7 @@
 apiVersion: composition.krateo.io/v0-1-0
 kind: Hazelcast
 metadata:
-  name: {{ $name }}-{{ $v.name }}-{{ $chartName }}
+  name: {{ $name }}-{{ $v.name }}-hzcomp
   annotations:
     krateo.io/paused: "{{ $gracefullyPaused }}"
 spec:
