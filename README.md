@@ -20,104 +20,17 @@ For this blueprint to function correctly, your Kubernetes cluster **must** have 
 
 1.  **Strimzi (for Kafka):**
     -   **Purpose:** Manages Kafka clusters and topics.
-    -   **Installation Guide:** [Strimzi Deployment Documentation](https://strimzi.io/docs/operators/latest/deploying)
 
 2.  **Hazelcast Platform Operator:**
     -   **Purpose:** Manages Hazelcast in-memory computing clusters.
-    -   **Installation Guide:** [Hazelcast Operator Deployment](https://docs.hazelcast.com/operator/5.14/)
 
 3.  **MongoDB Kubernetes Operator:**
     -   **Purpose:** Manages MongoDB Community replica sets and clusters.
-    -   **Installation Guide:** [https://github.com/mongodb/mongodb-kubernetes](https://github.com/mongodb/mongodb-kubernetes)
 
 4.  **CloudNative-PG (for PostgreSQL):**
     -   **Purpose:** Manages the full lifecycle of a PostgreSQL cluster.
-    -   **Installation Guide:** [CloudNative-PG Installation](https://cloudnative-pg.io/documentation/1.27/)
 
-### How to setup the toolchain
-
-```yaml
-# Source: cloudnative-stack/templates/kafka-cluster.yaml
-apiVersion: kafka.strimzi.io/v1beta2
-kind: Kafka
-metadata:
-  name: kafka
-  namespace: cloudnative-test
-spec:
-  kafka:
-    version: 4.1.0
-    metadataVersion: 4.1-IV1
-    listeners:
-      - name: plain
-        port: 9092
-        type: internal
-        tls: false
-      - name: tls
-        port: 9093
-        type: internal
-        tls: true
-    config:
-      offsets.topic.replication.factor: 1
-      transaction.state.log.replication.factor: 1
-      transaction.state.log.min.isr: 1
-      default.replication.factor: 1
-      min.insync.replicas: 1
-  entityOperator:
-    topicOperator: {}
-    userOperator: {}
----
-# Source: cloudnative-stack/templates/kafka-cluster.yaml
-apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaBridge
-metadata:
-  name: kafka
-  namespace: cloudnative-test
-spec:
-  replicas: 1
-  bootstrapServers: kafka-kafka-bootstrap:9092
-  http:
-    port: 8080
----
-# Source: cloudnative-stack/templates/kafka-cluster.yaml
-apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaNodePool
-metadata:
-  name: dual-role
-  namespace: cloudnative-test
-  labels:
-    strimzi.io/cluster: kafka
-spec:
-  replicas: 1
-  roles:
-    - controller
-    - broker
-  storage:
-    type: jbod
-    volumes:
-      - id: 0
-        type: persistent-claim
-        size: 10Gi
-        deleteClaim: false
-        kraftMetadata: shared
----
-# Source: cloudnative-stack/templates/kafka-cluster.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: kafka-lb
-  namespace: cloudnative-test
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
-    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
-spec:
-  type: LoadBalancer
-  ports:
-    - name: http
-      port: 8080
-      targetPort: 8080
-  selector:
-    strimzi.io/name: kafka-bridge
-```
+Checkout [REQUIREMENTS.md](REQUIREMENTS.md) for installation instructions.
 
 ## Usage
 
