@@ -39,9 +39,20 @@ helm install operator hazelcast/hazelcast-platform-operator --version=5.16.0 \
 ```
 
 Create secret for license key:
-```yaml
-kubectl create secret generic hazelcast-license-key -n hazelcast-system --from-literal=license-key=<license key>
+```sh
+cat <<'EOF' | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hazelcast-license-key
+  namespace: hazelcast-system
+type: Opaque
+stringData:
+  license-key: "<license key>"
+EOF
 ```
+
+You can get an evaluation license key from the [official Hazelcast website](https://hazelcast.com/get-started/).
 
 # Strimzi for Kafka
 Install the operator with:
