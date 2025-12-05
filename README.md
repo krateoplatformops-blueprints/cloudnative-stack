@@ -32,6 +32,14 @@ For this blueprint to function correctly, your Kubernetes cluster **must** have 
 
 Checkout [REQUIREMENTS.md](REQUIREMENTS.md) for installation instructions.
 
+Additionally, you also need to install the following blueprints through Krateo Composable Operations:
+- [github-scaffolding](https://github.com/krateoplatformops-blueprints/github-scaffolding?tab=readme-ov-file#install-using-krateo-composable-operation)
+- [cloudnativepg](https://github.com/krateoplatformops-blueprints/cloudnativepg?tab=readme-ov-file#install-using-krateo-composable-operation)
+- [hazelcast](https://github.com/krateoplatformops-blueprints/hazelcast?tab=readme-ov-file#install-using-krateo-composable-operation)
+- [kafka-cluster](https://github.com/krateoplatformops-blueprints/kafka-cluster?tab=readme-ov-file#install-using-krateo-composable-operation)
+- [kafka-topic](https://github.com/krateoplatformops-blueprints/kafka-topic?tab=readme-ov-file#install-using-krateo-composable-operation)
+- [mongodb](https://github.com/krateoplatformops-blueprints/mongodb?tab=readme-ov-file#install-using-krateo-composable-operation)
+
 ## Usage
 
 ### Install the Helm Chart
