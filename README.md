@@ -49,45 +49,41 @@ Download Helm Chart values:
 ```sh
 helm repo add marketplace https://marketplace.krateo.io
 helm repo update marketplace
-helm inspect values marketplace/cloudnative-stack --version 0.1.0 > ~/cloudnative-stack-values.yaml
+helm inspect values marketplace/cloudnative-stack --version 0.4.0 > ~/cloudnative-stack-values.yaml
 ```
 
 Modify the *cloudnative-stack-values.yaml* file as the following example:
 
 ```yaml
 frontend:
-  enabled: true
   deployments:
   - name: frontend-one
-    image: nginx:latest
     port: 80
     replicas: 1
+    features: []
+    syncEnabled: false
 backend:
-  enabled: true
   deployments:
   - name: backend-one
-    image: openeuler/spring-boot:latest
     port: 8080
     replicas: 1
+    features: []
+    syncEnabled: false
     kafka:
-      enabled: true
       topics:
       - topicName: "first-topic"
         partitions: 1
         replicas: 1    
     hazelcast:
-      enabled: true
       clusters:
       - name: "hz-first"
         size: 1
     mongodb:
-      enabled: true
       instances: 
       - clusterName: "mongodb-one"
         replicas: 1
         storageSize: "2Gi"
     cloudnativepg:
-      enabled: true
       instances:
       - clusterName: "cnpg-the-first"
         replicas: 1
@@ -103,7 +99,7 @@ helm install <release-name> cloudnative-stack \
   --namespace <release-namespace> \
   --create-namespace \
   -f ~/cloudnative-stack-values.yaml
-  --version 0.1.0 \
+  --version 0.4.0 \
   --wait
 ```
 
@@ -122,7 +118,7 @@ spec:
   chart:
     repo: cloudnative-stack
     url: https://marketplace.krateo.io
-    version: 0.1.0
+    version: 0.4.0
 EOF
 ```
 
@@ -137,44 +133,39 @@ metadata:
   namespace: <release-namespace> 
 spec:
   frontend:
-    enabled: true
     deployments:
     - name: frontend-one
-      image: nginx:latest
       port: 80
       replicas: 1
+      features: []
+      syncEnabled: false
   backend:
-    enabled: true
     deployments:
     - name: backend-one
-      image: openeuler/spring-boot:latest
       port: 8080
       replicas: 1
+      features: []
+      syncEnabled: false
       kafka:
-        enabled: true
         topics:
         - topicName: "first-topic"
           partitions: 1
           replicas: 1    
       hazelcast:
-        enabled: true
         clusters:
         - name: "hz-first"
           size: 1
       mongodb:
-        enabled: true
         instances: 
         - clusterName: "mongodb-one"
           replicas: 1
           storageSize: "2Gi"
       cloudnativepg:
-        enabled: true
         instances:
         - clusterName: "cnpg-the-first"
           replicas: 1
           storageSize: "1Gi"
           databaseName: "appdb"
-
 EOF
 ```
 
@@ -206,16 +197,263 @@ metadata:
   namespace: demo-system
 spec:
   blueprint:
+    repo: cloudnative-stack
     url: https://marketplace.krateo.io
-    version: 0.1.0 # this is the Blueprint version
+    version: 0.3.2
     hasPage: true
+    credentials: {}
+
   form:
-    alphabeticalOrder: false
+    widgetData:
+      schema: {}
+      objectFields:
+        - path: frontend.deployments
+          displayField: name
+        - path: backend.deployments
+          displayField: name
+        - path: kafka.topics
+          displayField: topicName
+        - path: hazelcast.clusters
+          displayField: name
+        - path: mongodb.instances
+          displayField: clusterName
+        - path: cloudnativepg.instances
+          displayField: databaseName
+      submitActionId: submit-action-from-string-schema
+      actions:
+        rest:
+          - id: submit-action-from-string-schema
+            onEventNavigateTo:
+              eventReason: "CompositionCreated"
+              url: '${ "/compositions/" + .response.metadata.namespace + "/" + (.response.kind | ascii_downcase) + "/" + .response.metadata.name }'
+              urlIfNoPage: "/blueprints"
+              timeout: 50
+            successMessage: '${"Successfully deployed " + .response.metadata.name + " composition in namespace " + .response.metadata.namespace }'
+            resourceRefId: composition-to-post
+            type: rest
+            payloadToOverride:
+              - name: spec
+                value: ${ .json | del(.composition) }
+              - name: metadata.name
+                value: ${ .json.composition.name }
+              - name: metadata.namespace
+                value: ${ .json.composition.namespace }
+            headers:
+              - "Content-Type: application/json"
+
+    widgetDataTemplate:
+      - forPath: stringSchema
+        expression: >
+          ${
+            .getNotOrderedSchema["values.schema.json"] as $schema
+            | .allowedNamespaces[] as $allowedNamespaces
+            | .featuresFrontend as $featuresFrontend
+            | .featuresBackend as $featuresBackend
+            | "\"properties\": " | length as $keylen
+            | ($schema | index("\"properties\": ")) as $idx
+            | ($schema[0:$idx + $keylen]) as $prefix
+            | ($schema[$idx + $keylen:]) as $rest
+            | {
+                composition: {
+                  type: "object",
+                  properties: {
+                    name: {
+                      type: "string"
+                    },
+                    namespace: {
+                      type: "string",
+                      enum: $allowedNamespaces
+                    }
+                  },
+                  required: ["name", "namespace"]
+                }
+              } | tostring as $injected
+            | ($prefix + $injected[:-1] + "," + $rest[1:]) as $withComposition
+            | (
+                if ($withComposition | test("\n  \"required\": \\[")) then
+                  if ($withComposition | test("\n  \"required\": \\[[^\\]]*\"composition\"")) then
+                    $withComposition
+                  else
+                    ($withComposition
+                    | gsub("\n  \"required\": \\["; "\n  \"required\": [\"composition\", "))
+                  end
+                else
+                  ($withComposition | index("\n  \"type\": \"object\"")) as $tidx
+                  | ($withComposition[0:$tidx+1]) as $p2
+                  | ($withComposition[$tidx+1:]) as $r2
+                  | $p2 + "  \"required\": [\"composition\"],\n" + $r2
+                end
+              ) as $schemaWithRequired
+            | $featuresFrontend as $ff
+            | ($ff | map("\"" + . + "\"") | join(", ")) as $feEnumItems
+            | ("[" + $feEnumItems + "]") as $frontendEnum
+            | $featuresBackend as $fb
+            | ($fb | map("\"" + . + "\"") | join(", ")) as $beEnumItems
+            | ("[" + $beEnumItems + "]") as $backendEnum
+            | (
+                if ($schemaWithRequired
+                      | test("(?s)\"frontend\"[\\s\\S]*\"features\"[\\s\\S]*\"enum\"")) then
+                  ($schemaWithRequired
+                  | gsub(
+                      "(?s)(?<prefix>\"frontend\"[\\s\\S]*\"features\"[\\s\\S]*\"enum\"\\s*:\\s*)\\[[^]]*\\]"
+                      ;
+                      "\(.prefix)\($frontendEnum)"
+                    ))
+                else
+                  ($schemaWithRequired
+                  | gsub(
+                      "(?s)(?<prefix>\"frontend\"[\\s\\S]*?\"features\"[\\s\\S]*?\"items\"[\\s\\S]*?\"type\": \"string\")"
+                      ;
+                      "\(.prefix),\n                \"enum\": \($frontendEnum)"
+                    ))
+                end
+              ) as $schemaAfterFrontend
+            | (
+                if ($schemaAfterFrontend
+                      | test("(?s)\"backend\"[\\s\\S]*\"features\"[\\s\\S]*\"enum\"")) then
+                  ($schemaAfterFrontend
+                  | gsub(
+                      "(?s)(?<prefix>\"backend\"[\\s\\S]*\"features\"[\\s\\S]*\"enum\"\\s*:\\s*)\\[[^]]*\\]"
+                      ;
+                      "\(.prefix)\($backendEnum)"
+                    ))
+                else
+                  ($schemaAfterFrontend
+                  | gsub(
+                      "(?s)(?<prefix>\"backend\"[\\s\\S]*?\"features\"[\\s\\S]*?\"items\"[\\s\\S]*?\"type\": \"string\")"
+                      ;
+                      "\(.prefix),\n                \"enum\": \($backendEnum)"
+                    ))
+                end
+              )
+          }
+
+    resourcesRefsTemplate:
+      iterator: ${ .allowedNamespacesWithResource[] }
+      template:
+        id: composition-to-post
+        apiVersion: composition.krateo.io/v0-3-2
+        namespace: ${ .namespace }
+        resource: ${ .resource }
+        verb: POST
+
+    apiRef:
+      name: '{{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-restaction-schema-override-allows-ns'
+      namespace: ""
+
     hasPage: true
+
+    instructions: |
+      # cloudnative-stack
+
+      A Cloud Native Stack based on Frontend / Backend / Kafka / Hazelcast / MongoDB / CloudNativePG
+      ...
   panel:
-    title: Cloud Native Stack
-    icon:
-      name: fa-cloud
+    markdown: Click here to deploy a **{{ .Release.Name }}** composition
+    apiRef:
+      name: "{{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-restaction-compositiondefinition-schema-ns"
+      namespace: ""
+    widgetData:
+      clickActionId: blueprint-click-action
+      footer:
+        - resourceRefId: blueprint-panel-button
+      tags:
+        - '{{ .Release.Namespace }}'
+        - '{{ .Values.blueprint.version }}'
+      icon:
+        name: fa-cloud
+      items:
+        - resourceRefId: blueprint-panel-markdown
+      title: Cloud Native Stack
+      actions:
+        openDrawer:
+          - id: blueprint-click-action
+            resourceRefId: blueprint-form
+            type: openDrawer
+            size: large
+        navigate:
+          - id: blueprint-click-action
+            path: '/{{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-blueprint'
+            type: navigate
+    widgetDataTemplate:
+      - forPath: icon.color
+        expression: >
+          ${
+            (
+              (
+                .getCompositionDefinition?.status?.conditions // []
+              )
+              | map(
+                  select(.type == "Ready")
+                  | if .status == "False" then
+                      "orange"
+                    elif .status == "True" then
+                      "green"
+                    else
+                      "grey"
+                    end
+                )
+              | first
+            )
+            // "grey"
+          }
+      - forPath: headerLeft
+        expression: >
+          ${
+            (
+              (
+                .getCompositionDefinition?.status?.conditions // []
+              )
+              | map(
+                  select(.type == "Ready")
+                  | if .status == "False" then
+                      "Ready:False"
+                    elif .status == "True" then
+                      "Ready:True"
+                    else
+                      "Ready:Unknown"
+                    end
+                )
+              | first
+            )
+            // "Ready:Unknown"
+          }
+      - forPath: headerRight
+        expression: >
+          ${
+            .getCompositionDefinition // {}
+            | .metadata.creationTimestamp
+            // "In the process of being created"
+          }
+    resourcesRefs:
+      items:
+        - id: blueprint-panel-markdown
+          apiVersion: widgets.templates.krateo.io/v1beta1
+          name: '{{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-panel-markdown'
+          namespace: ''
+          resource: markdowns
+          verb: GET
+        - id: blueprint-panel-button
+          apiVersion: widgets.templates.krateo.io/v1beta1
+          name: '{{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-panel-button-cleanup'
+          namespace: ''
+          resource: buttons
+          verb: DELETE
+        - id: blueprint-form
+          apiVersion: widgets.templates.krateo.io/v1beta1
+          name: '{{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-form'
+          namespace: ''
+          resource: forms
+          verb: GET
+  restActions:
+    - name: '{{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-restaction-compositiondefinition-schema-ns'
+      namespace: ""
+      api:
+        - name: getCompositionDefinition
+          path: "/apis/core.krateo.io/v1alpha1/namespaces/{{ .Release.Namespace }}/compositiondefinitions/{{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}"
+          verb: GET
+          headers:
+            - "Accept: application/json"
 EOF
 ```
 
