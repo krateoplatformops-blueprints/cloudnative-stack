@@ -126,7 +126,7 @@ Install the Blueprint using, as metadata.name, the *Composition* name (the Helm 
 
 ```sh
 cat <<EOF | kubectl apply -f -
-apiVersion: composition.krateo.io/v0-1-0
+apiVersion: composition.krateo.io/v0-4-0
 kind: CloudNativeStack
 metadata:
   name: <release-name> 
@@ -199,10 +199,9 @@ spec:
   blueprint:
     repo: cloudnative-stack
     url: https://marketplace.krateo.io
-    version: 0.3.2
+    version: 0.4.0
     hasPage: true
     credentials: {}
-
   form:
     widgetData:
       schema: {}
@@ -240,7 +239,6 @@ spec:
                 value: ${ .json.composition.namespace }
             headers:
               - "Content-Type: application/json"
-
     widgetDataTemplate:
       - forPath: stringSchema
         expression: >
