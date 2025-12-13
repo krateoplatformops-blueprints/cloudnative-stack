@@ -19,7 +19,7 @@ version: CHART_VERSION
 
 dependencies:
 - name: portal-composition-page-cloudnative-stack
-  version: "1.4.0"
+  version: "1.4.1"
   repository: "https://marketplace.krateo.io"
 
 home: https://krateo.io
