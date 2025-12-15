@@ -49,7 +49,7 @@ Download Helm Chart values:
 ```sh
 helm repo add marketplace https://marketplace.krateo.io
 helm repo update marketplace
-helm inspect values marketplace/cloudnative-stack --version 0.4.0 > ~/cloudnative-stack-values.yaml
+helm inspect values marketplace/cloudnative-stack --version 0.4.2 > ~/cloudnative-stack-values.yaml
 ```
 
 Modify the *cloudnative-stack-values.yaml* file as the following example:
@@ -99,7 +99,7 @@ helm install <release-name> cloudnative-stack \
   --namespace <release-namespace> \
   --create-namespace \
   -f ~/cloudnative-stack-values.yaml
-  --version 0.4.0 \
+  --version 0.4.2 \
   --wait
 ```
 
@@ -118,7 +118,7 @@ spec:
   chart:
     repo: cloudnative-stack
     url: https://marketplace.krateo.io
-    version: 0.4.0
+    version: 0.4.2
 EOF
 ```
 
@@ -126,7 +126,7 @@ Install the Blueprint using, as metadata.name, the *Composition* name (the Helm 
 
 ```sh
 cat <<EOF | kubectl apply -f -
-apiVersion: composition.krateo.io/v0-4-0
+apiVersion: composition.krateo.io/v0-4-2
 kind: CloudNativeStack
 metadata:
   name: <release-name> 
@@ -190,7 +190,7 @@ Install the Blueprint using, as metadata.name, the *Blueprint* name (the Helm Ch
 
 ```sh
 cat <<EOF | kubectl apply -f -
-apiVersion: composition.krateo.io/v1-1-0
+apiVersion: composition.krateo.io/v1-1-2
 kind: PortalBlueprintPage
 metadata:
   name: cloudnative-stack
@@ -199,7 +199,7 @@ spec:
   blueprint:
     repo: cloudnative-stack
     url: https://marketplace.krateo.io
-    version: 0.4.0
+    version: 0.4.2
     hasPage: true
     credentials: {}
   form:
@@ -330,7 +330,7 @@ spec:
       iterator: ${ .allowedNamespacesWithResource[] }
       template:
         id: composition-to-post
-        apiVersion: composition.krateo.io/v0-3-2
+        apiVersion: composition.krateo.io/v0-4-2
         namespace: ${ .namespace }
         resource: ${ .resource }
         verb: POST
@@ -345,9 +345,40 @@ spec:
       # cloudnative-stack
 
       A Cloud Native Stack based on Frontend / Backend / Kafka / Hazelcast / MongoDB / CloudNativePG
-      ...
+
+      ## Overview
+      
+      This Krateo blueprint deploys a complex, multi-tier application stack on Kubernetes. It is designed to be highly configurable and relies on best-practice Kubernetes operators for managing stateful components like databases and message queues.
+      The blueprint will provision the following components:
+
+      -   A **Frontend** pod (e.g., Nginx) to serve a user interface.
+      -   A **Backend** pod (e.g., Spring Boot) for business logic.
+      -   A **Kafka Topic** managed by the Strimzi operator.
+      -   A **Hazelcast** in-memory data grid cluster managed by the Hazelcast Platform Operator.
+      -   A **MongoDB** replica set managed by the MongoDB Community Kubernetes Operator.
+      -   A **PostgreSQL** cluster managed by the CloudNative-PG operator.
+
+      ## Requirements
+
+      For this blueprint to function correctly, your Kubernetes cluster **must** have the following operators installed and running. Please follow their official documentation for installation instructions.
+
+      1. **Strimzi (for Kafka):**
+          -   **Purpose:** Manages Kafka clusters and topics.
+          -   **Installation Guide:** [Strimzi Deployment Documentation](https://strimzi.io/docs/operators/latest/deploying)
+
+      2.  **Hazelcast Platform Operator:**
+          -   **Purpose:** Manages Hazelcast in-memory computing clusters.
+          -   **Installation Guide:** [Hazelcast Operator Deployment](https://docs.hazelcast.com/operator/5.14/)
+
+      3.  **MongoDB Kubernetes Operator:**
+          -   **Purpose:** Manages MongoDB Community replica sets and clusters.
+          -   **Installation Guide:** [https://github.com/mongodb/mongodb-kubernetes](https://github.com/mongodb/mongodb-kubernetes)
+
+      4.  **CloudNative-PG (for PostgreSQL):**
+          -   **Purpose:** Manages the full lifecycle of a PostgreSQL cluster.
+          -   **Installation Guide:** [CloudNative-PG Installation](https://cloudnative-pg.io/documentation/1.27/)
   panel:
-    markdown: Click here to deploy a **{{ .Release.Name }}** composition
+    markdown: Click here to deploy a **{{ .Values.global.compositionName }}** composition
     apiRef:
       name: "{{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-restaction-compositiondefinition-schema-ns"
       namespace: ""
@@ -446,12 +477,159 @@ spec:
   restActions:
     - name: '{{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-restaction-compositiondefinition-schema-ns'
       namespace: ""
+
       api:
         - name: getCompositionDefinition
           path: "/apis/core.krateo.io/v1alpha1/namespaces/{{ .Release.Namespace }}/compositiondefinitions/{{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}"
           verb: GET
           headers:
             - "Accept: application/json"
+
+        - name: getCompositionDefinitionResource
+          path: "/apis/core.krateo.io/v1alpha1/namespaces/{{ .Release.Namespace }}/compositiondefinitions/{{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}"
+          verb: GET
+          headers:
+            - "Accept: application/json"
+          filter: ".getCompositionDefinitionResource.status.resource"
+
+        - name: getOrderedSchema
+          path: >
+            ${ "/apis/apiextensions.k8s.io/v1/customresourcedefinitions/" + (.getCompositionDefinitionResource) + ".composition.krateo.io" }
+          verb: GET
+          headers:
+            - "Accept: application/json"
+          dependsOn:
+            name: getCompositionDefinitionResource
+          filter: >
+            .getOrderedSchema.spec.versions[]
+            | select(.name == "v{{ .Values.blueprint.version | replace "." "-" }}")
+            | .schema.openAPIV3Schema.properties.spec
+
+        - name: getNotOrderedSchema
+          path: >
+            ${ "/api/v1/namespaces/{{ .Release.Namespace }}/configmaps/" + (.getCompositionDefinitionResource) + "-v{{ .Values.blueprint.version | replace "." "-" }}-jsonschema-configmap" }
+          verb: GET
+          headers:
+            - "Accept: application/json"
+          dependsOn:
+            name: getCompositionDefinitionResource
+          filter: ".getNotOrderedSchema.data"
+
+        - name: getNamespaces
+          path: "/api/v1/namespaces"
+          verb: GET
+          headers:
+            - "Accept: application/json"
+          filter: "[.getNamespaces.items[] | .metadata.name]"
+
+      filter: >
+        {
+          getOrderedSchema: .getOrderedSchema,
+          getNotOrderedSchema: .getNotOrderedSchema,
+          getCompositionDefinition: .getCompositionDefinition,
+          getCompositionDefinitionResource: .getCompositionDefinitionResource,
+          possibleNamespacesForComposition:
+          [
+            .getNamespaces[] as $ns |
+            {
+              resource: .getCompositionDefinitionResource,
+              namespace: $ns
+            }
+          ]
+        }
+
+    - name: '{{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-restaction-schema-override-allows-ns'
+      namespace: ""
+
+      api:
+        - name: getCompositionDefinitionSchemaNs
+          path: "/call?apiVersion=templates.krateo.io/v1&resource=restactions&name={{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-restaction-compositiondefinition-schema-ns&namespace={{ .Release.Namespace }}"
+          verb: GET
+          endpointRef:
+            name: snowplow-endpoint
+            namespace: '{{ default "krateo-system" (default dict .Values.global).krateoNamespace }}'
+          headers:
+            - "Accept: application/json"
+          continueOnError: true
+          errorKey: getCompositionDefinitionSchemaNs
+          exportJwt: true
+
+        - name: allowedNamespaces
+          continueOnError: true
+          dependsOn:
+            name: getCompositionDefinitionSchemaNs
+            iterator: .getCompositionDefinitionSchemaNs.status.possibleNamespacesForComposition
+          path: "/apis/authorization.k8s.io/v1/selfsubjectaccessreviews"
+          verb: POST
+          headers:
+            - "Content-Type: application/json"
+          payload: |
+            ${
+              {
+                "kind": "SelfSubjectAccessReview",
+                "apiVersion": "authorization.k8s.io/v1",
+                "spec": {
+                  "resourceAttributes": {
+                    "namespace": .namespace,
+                    "verb": "create",
+                    "group": "composition.krateo.io",
+                    "version": "v{{ .Values.blueprint.version | replace "." "-" }}",
+                    "resource": .resource
+                  }
+                }
+              }
+            }
+        - name: featuresFrontend
+          verb: GET
+          headers:
+          - 'Accept: application/vnd.github+json'
+          - 'X-GitHub-Api-Version: 2022-11-28'
+          path: "/search/repositories?q=org:krateoplatformops-test+topic:feature+topic:frontend"
+          endpointRef:
+            name: github-api
+            namespace: '{{ default "krateo-system" (default dict .Values.global).krateoNamespace }}'
+          filter: |
+            .featuresFrontend.items | map((.name | sub("-feature$"; "")))
+
+        - name: featuresBackend
+          verb: GET
+          headers:
+          - 'Accept: application/vnd.github+json'
+          - 'X-GitHub-Api-Version: 2022-11-28'
+          path: "/search/repositories?q=org:krateoplatformops-test+topic:feature+topic:backend"
+          endpointRef:
+            name: github-api
+            namespace: '{{ default "krateo-system" (default dict .Values.global).krateoNamespace }}'
+          filter: |
+            .featuresBackend.items | map((.name | sub("-feature$"; "")))
+
+      filter: >
+        {
+          getOrderedSchema: .getCompositionDefinitionSchemaNs.status.getOrderedSchema,
+          getNotOrderedSchema: .getCompositionDefinitionSchemaNs.status.getNotOrderedSchema,
+          getCompositionDefinitionResource: .getCompositionDefinitionSchemaNs.status.getCompositionDefinitionResource,
+          featuresFrontend: .featuresFrontend,
+          featuresBackend: .featuresBackend,        
+          allowedNamespaces: [
+            [.allowedNamespaces[] | .status.allowed] as $allowed
+            | [.getCompositionDefinitionSchemaNs.status.possibleNamespacesForComposition[] | .namespace]
+            | to_entries
+            | map(select($allowed[.key] == true) | .value)
+          ],
+          allowedNamespacesWithResource: [
+            [.allowedNamespaces[] | .status.allowed] as $allowed
+            | .getCompositionDefinitionSchemaNs.status.getCompositionDefinitionResource as $resource
+            | [.getCompositionDefinitionSchemaNs.status.possibleNamespacesForComposition[] | .namespace]
+            | to_entries
+            | map(
+                select($allowed[.key] == true)
+                | {
+                    namespace: .value,
+                    resource: $resource
+                  }
+              )
+          ]
+        }
 EOF
 ```
 
