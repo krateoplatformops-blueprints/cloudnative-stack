@@ -98,7 +98,7 @@ helm install <release-name> cloudnative-stack \
   --repo https://marketplace.krateo.io \
   --namespace <release-namespace> \
   --create-namespace \
-  -f ~/cloudnative-stack-values.yaml
+  -f ~/cloudnative-stack-values.yaml \
   --version 0.4.2 \
   --wait
 ```
@@ -127,42 +127,42 @@ Install the Blueprint using, as metadata.name, the *Composition* name (the Helm 
 ```sh
 cat <<EOF | kubectl apply -f -
 apiVersion: composition.krateo.io/v0-4-2
-kind: CloudNativeStack
+kind: CloudnativeStack
 metadata:
   name: <release-name> 
   namespace: <release-namespace> 
 spec:
   frontend:
     deployments:
-    - name: frontend-one
+    - name: frontend
       port: 80
       replicas: 1
       features: []
       syncEnabled: false
   backend:
     deployments:
-    - name: backend-one
+    - name: backend
       port: 8080
       replicas: 1
       features: []
       syncEnabled: false
       kafka:
         topics:
-        - topicName: "first-topic"
+        - topicName: "topic"
           partitions: 1
           replicas: 1    
       hazelcast:
         clusters:
-        - name: "hz-first"
+        - name: "hz"
           size: 1
       mongodb:
         instances: 
-        - clusterName: "mongodb-one"
+        - clusterName: "mongodb"
           replicas: 1
           storageSize: "2Gi"
       cloudnativepg:
         instances:
-        - clusterName: "cnpg-the-first"
+        - clusterName: "cnpg"
           replicas: 1
           storageSize: "1Gi"
           databaseName: "appdb"
@@ -170,6 +170,20 @@ EOF
 ```
 
 ### Install using Krateo Composable Portal
+
+Create this secret as a reference for restactions.
+
+```sh
+cat <<EOF | kubectl apply -f -
+apiVersion: "v1"       
+kind: Secret
+metadata:                                                    
+ name: github-api
+ namespace: krateo-system
+stringData:
+ server-url: https://api.github.com
+EOF
+```
 
 ```sh
 cat <<EOF | kubectl apply -f -
@@ -180,18 +194,18 @@ metadata:
   namespace: krateo-system
 spec:
   chart:
-    repo: cloudnative-stack
+    repo: portal-blueprint-page-cloudnative-stack
     url: https://marketplace.krateo.io
-    version: 1.1.0
+    version: 0.0.2
 EOF
 ```
 
 Install the Blueprint using, as metadata.name, the *Blueprint* name (the Helm Chart name of the blueprint):
 
 ```sh
-cat <<EOF | kubectl apply -f -
-apiVersion: composition.krateo.io/v1-1-2
-kind: PortalBlueprintPage
+cat <<'EOF' | kubectl apply -f -
+apiVersion: composition.krateo.io/v0-0-2  
+kind: PortalBlueprintPageCloudnativeStack
 metadata:
   name: cloudnative-stack
   namespace: demo-system
